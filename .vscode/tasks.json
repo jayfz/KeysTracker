@@ -1,0 +1,46 @@
+{
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "make clean",
+      "detail": "Runs make clean",
+      "command": "make",
+      "args": ["clean"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "label": "valgrind",
+      "detail": "check for memory leaks",
+      "command": "valgrind",
+      "args": [
+        "--leak-check=yes",
+        // "--leak-check=full",
+        // "--show-leak-kinds=all",
+        "${workspaceFolder}/ejecutable"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "label": "make",
+      "detail": "Build project using Makefile",
+      "command": "make",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ],
+  "version": "2.0.0"
+}

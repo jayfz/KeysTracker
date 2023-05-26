@@ -1,0 +1,6 @@
+build/
+raw-frames/
+*.h264
+*.mkv
+*.mid
+KeysTracker
