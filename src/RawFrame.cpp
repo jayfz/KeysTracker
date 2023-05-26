@@ -4,7 +4,10 @@
 #include <string>
 #include <cstring>
 
-RawFrame::RawFrame(uint16_t width, uint16_t height, uint32_t frameNumber) : width(width), height(height), frameNumber(frameNumber), data(nullptr) {}
+uint32_t RawFrame::width = 0;
+uint32_t RawFrame::height = 0;
+
+RawFrame::RawFrame(uint32_t frameNumber) : frameNumber(frameNumber) {}
 RawFrame::~RawFrame()
 {
     if (data)
@@ -18,11 +21,11 @@ uint8_t *RawFrame::getData() const
 {
     return data;
 }
-uint16_t RawFrame::getWidth() const
+uint32_t RawFrame::getWidth() const
 {
     return width;
 }
-uint16_t RawFrame::getHeight() const
+uint32_t RawFrame::getHeight() const
 {
     return height;
 }
@@ -31,7 +34,7 @@ uint16_t RawFrame::getFrameNumber() const
     return frameNumber;
 }
 
-void RawFrame::save()
+void RawFrame::save() const
 {
     std::string outFileName = "./raw-frames/frame-" + std::to_string(this->frameNumber) + ".ppm";
     std::ofstream outputFrameFile(outFileName, std::ofstream::binary);
@@ -48,18 +51,18 @@ std::size_t RawFrame::getFrameSize() const
     return width * height * 3;
 }
 
-void RawFrame::copyData(const uint8_t *buffer, size_t startingFrom)
+void RawFrame::copyData(const uint8_t *buffer)
 {
     if (this->data)
         return;
 
     this->data = new uint8_t[this->getFrameSize()];
-    std::memcpy(this->data, buffer + startingFrom, this->getFrameSize());
+    std::memcpy(this->data, buffer, this->getFrameSize());
 }
 
 void RawFrame::saveBigFormatFrame(const std::vector<std::unique_ptr<RawFrame>> &collection)
 {
-    if (collection.size() <= 0)
+    if (collection.empty())
     {
         return; // nothing to do
     }
@@ -83,4 +86,3 @@ void RawFrame::saveBigFormatFrame(const std::vector<std::unique_ptr<RawFrame>> &
 
     outputFrameFile.flush();
 }
-

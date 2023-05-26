@@ -5,8 +5,6 @@
 #include <vector>
 #include <memory>
 #include "RawFrame.h"
-#include "Keyboard.h"
-#include "ManagedMidiFile.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -31,7 +29,8 @@ public:
     H264Decoder(const H264Decoder &other) = delete;
     H264Decoder &operator=(const H264Decoder &other) = delete;
     bool wasInitializedCorrectly();
-    void decode(Keyboard &keyboard, ManagedMidiFile &midifile);
+    void decode(uint8_t yPositionPercentage);
+    const std::vector<std::unique_ptr<RawFrame>> &getFrameCollection() const;
 
 private:
     static const uint16_t INBUF_SIZE = 4096;
@@ -50,7 +49,7 @@ private:
     uint8_t inbuf[INBUF_SIZE + AV_INPUT_BUFFER_PADDING_SIZE];
     SwsContext *swsContext = nullptr;
 
-    bool processFrame();
+    bool processFrame(uint8_t yPositionPercentage);
     SwsContext *getSWSContext();
 };
 

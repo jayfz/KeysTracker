@@ -21,8 +21,6 @@ extern "C"
 }
 #endif
 
-void markShortNotes(std::vector<MidiKeyboardEvent> &events);
-
 H264Decoder::H264Decoder(const std::string &fileName, uint32_t startingFrom, uint32_t numFramesToDecode) : fileName(fileName), startingFrom(startingFrom), numFramesToDecode(numFramesToDecode)
 {
     this->packet = av_packet_alloc();
@@ -41,7 +39,7 @@ H264Decoder::~H264Decoder()
         {
             av_packet_free(&this->packet);
             this->packet = nullptr;
-            processFrame(); // at the end we need to "flush the decoder", that's done calling processFrame with this->packet as nullptr;
+            processFrame(0); // at the end we need to "flush the decoder", that's done calling processFrame with this->packet as nullptr; This functions parameter in this case dont matter
         }
 
     if (this->parser)
@@ -82,7 +80,7 @@ bool H264Decoder::wasInitializedCorrectly()
     return correct;
 }
 
-void H264Decoder::decode(Keyboard &keyboard, ManagedMidiFile &midifile)
+void H264Decoder::decode(uint8_t yPositionPercentage)
 {
     std::ifstream inputFile;
     inputFile.open(this->fileName, std::ios_base::binary);
@@ -101,8 +99,7 @@ void H264Decoder::decode(Keyboard &keyboard, ManagedMidiFile &midifile)
 
         while (bytesRead > 0)
         {
-            int parserResult = av_parser_parse2(this->parser, this->codecContext, &this->packet->data, &this->packet->size,
-                                                inbufAddress, bytesRead, AV_NOPTS_VALUE, AV_NOPTS_VALUE, 0);
+            int parserResult = av_parser_parse2(this->parser, this->codecContext, &this->packet->data, &this->packet->size, inbufAddress, bytesRead, AV_NOPTS_VALUE, AV_NOPTS_VALUE, 0);
 
             if (parserResult < 0)
                 return;
@@ -112,7 +109,7 @@ void H264Decoder::decode(Keyboard &keyboard, ManagedMidiFile &midifile)
 
             if (this->packet->size)
             {
-                shouldStopDecoding = this->processFrame();
+                shouldStopDecoding = this->processFrame(yPositionPercentage);
                 if (shouldStopDecoding)
                     break;
             }
@@ -121,43 +118,9 @@ void H264Decoder::decode(Keyboard &keyboard, ManagedMidiFile &midifile)
         if (shouldStopDecoding)
             break;
     }
-
-    // RawFrame::saveBigFormatFrame(this->frameCollection);
-
-    std::vector<MidiKeyboardEvent> events;
-    keyboard.generateMidiEvents(this->frameCollection, events);
-    markShortNotes(events);
-
-    uint32_t previousTick = 0;
-
-    for (uint32_t i = 0; i < events.size(); i++)
-    {
-        MidiKeyboardEvent event = events[i];
-        uint32_t fixedTick = event.tick;
-
-        // note has been marked as short, so forget about it
-        if (event.key == 255)
-            continue;
-
-        if (std::abs(static_cast<int32_t>(event.tick) - static_cast<int32_t>(previousTick)) <= 20)
-        {
-            fixedTick = previousTick;
-        }
-        else
-        {
-            previousTick = event.tick;
-        }
-
-        if (event.left)
-            midifile.addLeftHandEvent(fixedTick, event.key + 12, event.velocity);
-        else
-            midifile.addRightHandEvent(fixedTick, event.key + 12, event.velocity);
-    }
-
-    midifile.save();
 }
 
-bool H264Decoder::processFrame()
+bool H264Decoder::processFrame(uint8_t yPositionPercentage)
 {
 
     int sendPacketResult;
@@ -190,25 +153,24 @@ bool H264Decoder::processFrame()
         av_image_alloc(dst_data, dst_linesize, this->frame->width, this->frame->height, AV_PIX_FMT_RGB24, 1);
         sws_scale(swsctx, frame->data, frame->linesize, 0, this->frame->height, dst_data, dst_linesize);
 
+        RawFrame::width = this->frame->width;
+
         if ((static_cast<uint32_t>(this->frame->coded_picture_number) >= this->startingFrom) && this->numFramesDecodedSofar < this->numFramesToDecode)
         {
-            auto rawFrame = std::make_unique<RawFrame>(this->frame->width, 8, this->frame->coded_picture_number);
-            size_t copyStartingFrom = (this->frame->width * 3) * (this->frame->height / 2);
-            rawFrame->copyData(dst_data[0], copyStartingFrom);
+            auto rawFrame = std::make_unique<RawFrame>(this->frame->coded_picture_number);
+            size_t copyStartingFrom = (this->frame->width * 3) * ((this->frame->height * yPositionPercentage) / 100);
+            rawFrame->copyData(dst_data[0] + copyStartingFrom);
             this->numFramesDecodedSofar += 1;
             frameCollection.push_back(move(rawFrame));
-
             std::cout << "Proccessed frame number " << this->numFramesDecodedSofar << std::endl;
-            // RawFrame rawFrame(this->frame->width, this->frame->height, this->frame->coded_picture_number);
-            // rawFrame.save();
-        }
-        else if (this->numFramesDecodedSofar == this->numFramesToDecode)
-        {
-            av_freep(&dst_data[0]);
-            return true;
         }
 
         av_freep(&dst_data[0]);
+
+        if (this->numFramesDecodedSofar == this->numFramesToDecode)
+        {
+            return true;
+        }
     }
 
     return false;
@@ -234,6 +196,11 @@ SwsContext *H264Decoder::getSWSContext()
     }
 
     return this->swsContext;
+}
+
+const std::vector<std::unique_ptr<RawFrame>> &H264Decoder::getFrameCollection() const
+{
+    return this->frameCollection;
 }
 
 void markShortNotes(std::vector<MidiKeyboardEvent> &events)

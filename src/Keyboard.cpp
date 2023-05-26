@@ -352,3 +352,44 @@ void Keyboard::printColoredImage()
 
     outputFrameFile.flush();
 }
+
+void Keyboard::markShortNotes(std::vector<MidiKeyboardEvent> &events)
+{
+    // key: key
+    // value: tick, index,
+    std::map<uint8_t, std::tuple<int, int>> temp;
+
+    uint32_t index = 0;
+    // for (auto &event : events)
+    for (uint32_t i = 0; i < events.size(); i++)
+    {
+        auto event = events[i];
+        auto it = temp.find(event.key);
+
+        if (it == temp.end())
+        {
+            temp[event.key] = {event.tick, index};
+        }
+        else
+        {
+            if (event.velocity > 0)
+            {
+                std::cout << "Ok, this should have not happened" << std::endl;
+                break;
+            }
+
+            int tempTick = std::get<0>(it->second);
+            int tempIndex = std::get<1>(it->second);
+            if (std::abs(static_cast<int32_t>(tempTick) - static_cast<int32_t>(event.tick) < 2))
+            {
+                // 255 means to me, ignore these events, both on and off
+                events[tempIndex].key = 255;
+                event.key = 255;
+            }
+
+            temp.erase(event.key);
+        }
+
+        index += 1;
+    }
+}

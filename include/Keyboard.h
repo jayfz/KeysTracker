@@ -32,6 +32,8 @@ public:
     void generateMidiEvents(const std::vector<std::unique_ptr<RawFrame>> &collection, std::vector<MidiKeyboardEvent> &events);
     void printColoredImage();
 
+    static void markShortNotes(std::vector<MidiKeyboardEvent> &events);
+
     enum class Key
     {
         C,
