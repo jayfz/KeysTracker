@@ -71,7 +71,7 @@ HSL rgb2hsl(double red, double green, double blue)
     return result;
 }
 
-RGB calculateAverageRGB(const std::vector<RGB> &colors)
+bool areFirstTwoPixelsDifferentFromLastTwoPixels(const std::vector<RGB> &colors)
 {
 
     // do some special checks for earlier return;
@@ -102,9 +102,15 @@ RGB calculateAverageRGB(const std::vector<RGB> &colors)
 
         if (startAndEndAreDifferentColors)
         {
-            return {0, 0, 0};
+            return true;
         }
     }
+
+    return false;
+}
+
+RGB calculateAverageRGB(const std::vector<RGB> &colors)
+{
 
     // run of the mill average calculator if above does not pan out;
     double redAccumualtor = 0;
@@ -126,18 +132,20 @@ RGB calculateAverageRGB(const std::vector<RGB> &colors)
             static_cast<uint8_t>(greenAccumualtor),
             static_cast<uint8_t>(blueAccumualtor)};
 }
-bool isColorCloseEnoughToReferenceRGB(RGB reference, RGB other)
+bool isColorCloseEnoughToReferenceRGB(RGB reference, RGB other, bool beStrict)
 {
 
     bool redIsSimilar = false;
     bool greenIsSimilar = false;
     bool blueIsSimilar = false;
 
-    if (std::abs(reference.red - other.red) < 24)
+    uint8_t fudgeFactor = beStrict ? 24 : 50;
+
+    if (std::abs(reference.red - other.red) < fudgeFactor)
         redIsSimilar = true;
-    if (std::abs(reference.green - other.green) < 24)
+    if (std::abs(reference.green - other.green) < fudgeFactor)
         greenIsSimilar = true;
-    if (std::abs(reference.blue - other.blue) < 24)
+    if (std::abs(reference.blue - other.blue) < fudgeFactor)
         blueIsSimilar = true;
 
     return (redIsSimilar && greenIsSimilar && blueIsSimilar);

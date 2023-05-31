@@ -165,6 +165,19 @@ bool H264Decoder::processFrame(uint8_t yPositionPercentage)
             std::cout << "Proccessed frame number " << this->numFramesDecodedSofar << std::endl;
         }
 
+        // take a sample frame
+        if (this->numFramesDecodedSofar == 30)
+        {
+            std::string outFileName = "./raw-frames/frame-30.ppm";
+            std::ofstream outputFrameFile(outFileName, std::ofstream::binary);
+
+            outputFrameFile << "P6\n"
+                            << this->frame->width << " " << this->frame->height << "\n"
+                            << 255 << "\n";
+
+            outputFrameFile.write(reinterpret_cast<char *>(dst_data[0]), this->frame->width * this->frame->height * 3);
+        }
+
         av_freep(&dst_data[0]);
 
         if (this->numFramesDecodedSofar == this->numFramesToDecode)
@@ -201,50 +214,4 @@ SwsContext *H264Decoder::getSWSContext()
 const std::vector<std::unique_ptr<RawFrame>> &H264Decoder::getFrameCollection() const
 {
     return this->frameCollection;
-}
-
-void markShortNotes(std::vector<MidiKeyboardEvent> &events)
-{
-    // key: key
-    // value: tick, index,
-    std::map<uint8_t, std::tuple<int, int>> temp;
-
-    uint32_t index = 0;
-    // for (auto &event : events)
-    for (uint32_t i = 0; i < events.size(); i++)
-    {
-        auto event = events[i];
-        auto it = temp.find(event.key);
-
-        // if (event.tick >= 20700 && event.key == 69)
-        // {
-        //     std::cout << "Something fishy is happening around here " << std::endl;
-        // }
-
-        if (it == temp.end())
-        {
-            temp[event.key] = {event.tick, index};
-        }
-        else
-        {
-            if (event.velocity > 0)
-            {
-                std::cout << "Ok, this should have not happened" << std::endl;
-                break;
-            }
-
-            int tempTick = std::get<0>(it->second);
-            int tempIndex = std::get<1>(it->second);
-            if (std::abs(static_cast<int32_t>(tempTick) - static_cast<int32_t>(event.tick) < 2))
-            {
-                // 255 means to me, ignore these events, both on and off
-                events[tempIndex].key = 255;
-                event.key = 255;
-            }
-
-            temp.erase(event.key);
-        }
-
-        index += 1;
-    }
 }

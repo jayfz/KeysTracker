@@ -16,12 +16,19 @@ struct MidiKeyboardEvent
     uint8_t key;
     uint8_t velocity;
     bool left;
+    MidiKeyboardEvent(uint32_t tick, uint8_t key, uint8_t velocity, bool left);
+};
+
+enum class TrackMode
+{
+    TrackKeys,
+    FallingNotes
 };
 
 class Keyboard
 {
 public:
-    Keyboard(uint32_t octaveWidthInPixels, uint32_t firstOctaveAt, std::array<RGB, 4> noteColors);
+    Keyboard(uint32_t octaveWidthInPixels, uint32_t firstOctaveAt, std::array<RGB, 4> noteColors, TrackMode mode);
     ~Keyboard();
     uint32_t getNote(uint32_t width);
     std::vector<std::tuple<uint8_t, bool>> getNoteOnEvents(const std::vector<uint8_t> &pixelLine);
@@ -34,7 +41,7 @@ public:
 
     static void markShortNotes(std::vector<MidiKeyboardEvent> &events);
 
-    enum class Key
+        enum class Key
     {
         C,
         Db,
@@ -58,14 +65,22 @@ public:
         RightHandBlackKey
     };
 
+    static bool isBlackKey(Key note);
+
 private:
     uint32_t octaveWidthInPixels;
     uint32_t firstOctaveAt;
     std::array<RGB, 4> noteColors;
+    TrackMode mode;
     std::array<double, 12> notesHalfWidths;
-    static const uint32_t rangeOfNoteDetection = 5;
+    uint32_t bottomRangeOfNoteDetection;
+    uint32_t upperRangeOfNoteDetection;
     static const uint32_t numOfWhiteKeysInOctave = 7;
+    static const uint32_t numOfBlackKeysInOctave = 5;
     uint32_t octaveNumber(uint32_t width);
+
+    void generateMidiEventsByTrackingKeys(const std::vector<std::unique_ptr<RawFrame>> &collection, std::vector<MidiKeyboardEvent> &events);
+    void generateMidiEventsByTrackingFallingNotes(const std::vector<std::unique_ptr<RawFrame>> &collection, std::vector<MidiKeyboardEvent> &events);
 
     // debug
     std::vector<uint8_t *> linesColored;

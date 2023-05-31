@@ -10,20 +10,19 @@
 
 int main(int argc, char *argv[])
 {
-    std::string h264FileName;
-
-    if (argc != 2)
+    if (argc != 5)
     {
-        std::cout << "Incorrect usage. Only pass a single h264 file as input." << std::endl;
+        std::cout << "Incorrect usage. Only pass a single h264 file as input and mode (easy or hard)" << std::endl;
         return EXIT_FAILURE;
     }
-    else
-    {
-        h264FileName = argv[1];
-    }
 
-    int octaveLength = 310;
-    int firstOctaveStartsAt = 187;
+    std::string h264FileName = argv[1];
+    TrackMode trackMode = std::string(argv[2]) == "keys" ? TrackMode::TrackKeys : TrackMode::FallingNotes;
+    int octaveLength = std::stoi(argv[3]);        // 310;
+    int firstOctaveStartsAt = std::stoi(argv[4]); // 187;
+
+    RawFrame::height = (trackMode == TrackMode::TrackKeys) ? 1 : 8;
+    uint8_t yCoordsPercentage = (trackMode == TrackMode::TrackKeys) ? 85 : 50;
 
     std::array<RGB, 4> noteColors;
 
@@ -37,19 +36,25 @@ int main(int argc, char *argv[])
     noteColors[rhwk] = {177, 144, 94};  //#b99259
     noteColors[rhbk] = {177, 109, 48};  //#b16d30
 
-    Keyboard keyboard(octaveLength, firstOctaveStartsAt, noteColors);
+    // noteColors[lhwk] = {188, 87, 99};
+    // noteColors[lhbk] = {188, 87, 99};
+    // noteColors[rhwk] = {136, 195, 86};
+    // noteColors[rhbk] = {92, 155, 42};
+
+    Keyboard keyboard(octaveLength, firstOctaveStartsAt, noteColors, trackMode);
     ManagedMidiFile midiFile("./didThisAllPayOff.mid");
     H264Decoder decoder(h264FileName, 3);
 
     if (decoder.wasInitializedCorrectly())
     {
-        RawFrame::height = 8;
-        uint8_t yCoordsPercentage = 50;
+
         decoder.decode(yCoordsPercentage);
         std::vector<MidiKeyboardEvent> events;
 
         keyboard.generateMidiEvents(decoder.getFrameCollection(), events);
-        Keyboard::markShortNotes(events);
+
+        if (trackMode == TrackMode::FallingNotes)
+            Keyboard::markShortNotes(events);
 
         uint32_t previousTick = 0;
 
@@ -72,9 +77,9 @@ int main(int argc, char *argv[])
             }
 
             if (event.left)
-                midiFile.addLeftHandEvent(fixedTick, event.key + 12, event.velocity);
+                midiFile.addLeftHandEvent(fixedTick, event.key + 0, event.velocity);
             else
-                midiFile.addRightHandEvent(fixedTick, event.key + 12, event.velocity);
+                midiFile.addRightHandEvent(fixedTick, event.key + 0, event.velocity);
         }
 
         midiFile.save();
