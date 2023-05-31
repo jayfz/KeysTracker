@@ -38,6 +38,20 @@
       "problemMatcher": [],
       "group": {
         "kind": "build",
+        "isDefault": false
+      }
+    },
+    {
+      "type": "shell",
+      "label": "cmake",
+      "detail": "Build project using cmake",
+      "command": "cmake --build .",
+      "options": {
+        "cwd": "${workspaceFolder}/build"
+      },
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
         "isDefault": true
       }
     }

@@ -31,15 +31,22 @@ int main(int argc, char *argv[])
     constexpr auto rhwk = static_cast<int>(Keyboard::NoteColorIndex::RightHandWhiteKey);
     constexpr auto rhbk = static_cast<int>(Keyboard::NoteColorIndex::RightHandBlackKey);
 
-    noteColors[lhwk] = {151, 116, 160}; //#9774a0
-    noteColors[lhbk] = {103, 80, 109};  //#67506d
-    noteColors[rhwk] = {177, 144, 94};  //#b99259
-    noteColors[rhbk] = {177, 109, 48};  //#b16d30
+    if (trackMode == TrackMode::FallingNotes)
+    {
 
-    // noteColors[lhwk] = {188, 87, 99};
-    // noteColors[lhbk] = {188, 87, 99};
-    // noteColors[rhwk] = {136, 195, 86};
-    // noteColors[rhbk] = {92, 155, 42};
+        noteColors[lhwk] = {151, 116, 160};
+        noteColors[lhbk] = {103, 80, 109};
+        noteColors[rhwk] = {177, 144, 94};
+        noteColors[rhbk] = {177, 109, 48};
+    }
+    else
+    {
+
+        noteColors[lhwk] = {188, 87, 99};
+        noteColors[lhbk] = {188, 87, 99};
+        noteColors[rhwk] = {136, 195, 86};
+        noteColors[rhbk] = {92, 155, 42};
+    }
 
     Keyboard keyboard(octaveLength, firstOctaveStartsAt, noteColors, trackMode);
     ManagedMidiFile midiFile("./didThisAllPayOff.mid");
@@ -52,34 +59,47 @@ int main(int argc, char *argv[])
         std::vector<MidiKeyboardEvent> events;
 
         keyboard.generateMidiEvents(decoder.getFrameCollection(), events);
-
+        // mark short notes for deletion
         if (trackMode == TrackMode::FallingNotes)
+        {
             Keyboard::markShortNotes(events);
 
-        uint32_t previousTick = 0;
+            uint32_t previousTick = 0;
 
-        for (uint32_t i = 0; i < events.size(); i++)
+            // snap notes close to each other and add them to the right list (left and right)
+            for (uint32_t i = 0; i < events.size(); i++)
+            {
+                MidiKeyboardEvent event = events[i];
+                uint32_t fixedTick = event.tick;
+
+                // note has been marked as short, so forget about it
+                if (event.key == 255)
+                    continue;
+
+                if (std::abs(static_cast<int32_t>(event.tick) - static_cast<int32_t>(previousTick)) <= 20)
+                {
+                    fixedTick = previousTick;
+                }
+                else
+                {
+                    previousTick = event.tick;
+                }
+
+                if (event.left)
+                    midiFile.addLeftHandEvent(fixedTick, event.key + 0, event.velocity);
+                else
+                    midiFile.addRightHandEvent(fixedTick, event.key + 0, event.velocity);
+            }
+        }
+        if (trackMode == TrackMode::TrackKeys)
         {
-            MidiKeyboardEvent event = events[i];
-            uint32_t fixedTick = event.tick;
-
-            // note has been marked as short, so forget about it
-            if (event.key == 255)
-                continue;
-
-            if (std::abs(static_cast<int32_t>(event.tick) - static_cast<int32_t>(previousTick)) <= 20)
+            for (const auto &event : events)
             {
-                fixedTick = previousTick;
+                if (event.left)
+                    midiFile.addLeftHandEvent(event.tick, event.key + 0, event.velocity);
+                else
+                    midiFile.addRightHandEvent(event.tick, event.key + 0, event.velocity);
             }
-            else
-            {
-                previousTick = event.tick;
-            }
-
-            if (event.left)
-                midiFile.addLeftHandEvent(fixedTick, event.key + 0, event.velocity);
-            else
-                midiFile.addRightHandEvent(fixedTick, event.key + 0, event.velocity);
         }
 
         midiFile.save();

@@ -154,7 +154,8 @@ bool H264Decoder::processFrame(uint8_t yPositionPercentage)
         sws_scale(swsctx, frame->data, frame->linesize, 0, this->frame->height, dst_data, dst_linesize);
 
         RawFrame::width = this->frame->width;
-
+        // coded_picture_number -> bit order
+        // display_picture_number -> display order
         if ((static_cast<uint32_t>(this->frame->coded_picture_number) >= this->startingFrom) && this->numFramesDecodedSofar < this->numFramesToDecode)
         {
             auto rawFrame = std::make_unique<RawFrame>(this->frame->coded_picture_number);
@@ -162,7 +163,8 @@ bool H264Decoder::processFrame(uint8_t yPositionPercentage)
             rawFrame->copyData(dst_data[0] + copyStartingFrom);
             this->numFramesDecodedSofar += 1;
             frameCollection.push_back(move(rawFrame));
-            std::cout << "Proccessed frame number " << this->numFramesDecodedSofar << std::endl;
+            // std::cout << "Proccessed frame number " << this->numFramesDecodedSofar << std::endl;
+            std::cout << "Proccessed frame number " << this->frame->coded_picture_number << std::endl;
         }
 
         // take a sample frame

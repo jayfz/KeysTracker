@@ -93,45 +93,6 @@ Keyboard::~Keyboard()
         }
     }
 }
-// uint32_t Keyboard::getNote(uint32_t noteXPosition)
-// {
-
-//     // should give you a number between 21 and  108 (a full keyboard is 88 keys
-//     // lowest C starts at 24
-
-//     if (noteXPosition < firstOctaveAt)
-//     {
-//         return 0;
-//     }
-
-//     // a number between 1 and 8,9,10?
-//     uint32_t octave = this->octaveNumber(noteXPosition);
-
-//     // a number between 0 and 309 //310
-//     uint32_t noteXInFunctionOfAnOctaveWidth = (noteXPosition - firstOctaveAt) % octaveWidthInPixels;
-
-//     uint32_t key = static_cast<int>(Key::C);
-//     bool foundKey = false;
-
-//     for (; key <= static_cast<int>(Key::B); key++)
-//     {
-//         const double lowerBound = this->notesHalfWidths[key] - this->rangeOfNoteDetection;
-//         const double upperBound = this->notesHalfWidths[key] + this->rangeOfNoteDetection;
-
-//         if (noteXInFunctionOfAnOctaveWidth >= lowerBound && noteXInFunctionOfAnOctaveWidth <= upperBound)
-//         {
-//             foundKey = true;
-//             break;
-//         }
-//     }
-
-//     if (foundKey)
-//     {
-//         return 24 + (12 * octave) + key;
-//     }
-
-//     return 0;
-// }
 
 uint32_t Keyboard::octaveNumber(uint32_t noteXPosition)
 {
