@@ -1,13 +1,59 @@
 {
   "configurations": [
     {
-      "name": "C/C++: g++ build and debug active file",
+      "name": "Test run: Barfus",
       "type": "cppdbg",
       "request": "launch",
       // "program": "${fileDirname}/${fileBasenameNoExtension}",
       "program": "${workspaceFolder}/build/src/KeysTracker",
-      "args": ["./barfus.h264", "keys", "172", "50"],
-      // "args": ["./test.h264", "falling-notes", "310", "187"],
+      "args": [
+        "./barfus.h264",
+        "keys",
+        "172",
+        "50",
+        "hBC5763",
+        "hBC5763",
+        "h88C356",
+        "h5C9B2A"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      // "preLaunchTask": "cppbuild",
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        },
+        {
+          "description": "Set Disassembly Flavor to Intel",
+          "text": "-gdb-set disassembly-flavor intel",
+          "ignoreFailures": true
+        }
+      ],
+      // "preLaunchTask": "make",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "miDebuggerArgs": "-q -ex quit; wait() { fg >/dev/null; }; /bin/gdb -q --interpreter=mi"
+    },
+    {
+      "name": "Test run: Firestorm",
+      "type": "cppdbg",
+      "request": "launch",
+      // "program": "${fileDirname}/${fileBasenameNoExtension}",
+      "program": "${workspaceFolder}/build/src/KeysTracker",
+      "args": [
+        "./test.h264",
+        "falling-notes",
+        "310",
+        "187",
+        "h9774A0",
+        "h67506D",
+        "hB1905E",
+        "hB16D30"
+      ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],

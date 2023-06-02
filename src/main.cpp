@@ -10,9 +10,9 @@
 
 int main(int argc, char *argv[])
 {
-    if (argc != 5)
+    if (argc != 9)
     {
-        std::cout << "Incorrect usage. Only pass a single h264 file as input and mode (easy or hard)" << std::endl;
+        std::cout << "Incorrect usage. " + std::string(argv[1]) << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -31,22 +31,26 @@ int main(int argc, char *argv[])
     constexpr auto rhwk = static_cast<int>(Keyboard::NoteColorIndex::RightHandWhiteKey);
     constexpr auto rhbk = static_cast<int>(Keyboard::NoteColorIndex::RightHandBlackKey);
 
-    if (trackMode == TrackMode::FallingNotes)
-    {
+    noteColors[lhwk] = stringToRGB(argv[5]);
+    noteColors[lhbk] = stringToRGB(argv[6]);
+    noteColors[rhwk] = stringToRGB(argv[7]);
+    noteColors[rhbk] = stringToRGB(argv[8]);
 
-        noteColors[lhwk] = {151, 116, 160};
-        noteColors[lhbk] = {103, 80, 109};
-        noteColors[rhwk] = {177, 144, 94};
-        noteColors[rhbk] = {177, 109, 48};
-    }
-    else
-    {
+    // if (trackMode == TrackMode::FallingNotes)
+    // {
 
-        noteColors[lhwk] = {188, 87, 99};
-        noteColors[lhbk] = {188, 87, 99};
-        noteColors[rhwk] = {136, 195, 86};
-        noteColors[rhbk] = {92, 155, 42};
-    }
+    //     noteColors[lhwk] = {151, 116, 160}; //#9774A0
+    //     noteColors[lhbk] = {103, 80, 109};  //#67506D
+    //     noteColors[rhwk] = {177, 144, 94};  //#B1905E
+    //     noteColors[rhbk] = {177, 109, 48};  //#B16D30
+    // }
+    // else
+    // {
+    //     noteColors[lhwk] = {188, 87, 99};  //#BC5763
+    //     noteColors[lhbk] = {188, 87, 99};  //#BC5763
+    //     noteColors[rhwk] = {136, 195, 86}; //#88C356
+    //     noteColors[rhbk] = {92, 155, 42};  //#5C9B2A
+    // }
 
     Keyboard keyboard(octaveLength, firstOctaveStartsAt, noteColors, trackMode);
     ManagedMidiFile midiFile("./didThisAllPayOff.mid");

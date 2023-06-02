@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <iostream>
 #include <algorithm>
+#include <sstream>
 #include "Utils.h"
 
 /*
@@ -149,4 +150,35 @@ bool isColorCloseEnoughToReferenceRGB(RGB reference, RGB other, bool beStrict)
         blueIsSimilar = true;
 
     return (redIsSimilar && greenIsSimilar && blueIsSimilar);
+}
+
+uint8_t stringHexToInt(const std::string &colorChannel)
+{
+    std::stringstream stream;
+    stream << std::hex << colorChannel;
+
+    uint16_t result; // apparently can't use a uint8_t to read since it's treated as a character...
+    stream >> result;
+
+    return static_cast<uint8_t>(result);
+}
+
+RGB stringToRGB(char *color)
+{
+    std::string colorString(color);
+
+    if (colorString.size() != 7 || colorString[0] != 'h')
+    {
+        throw std::invalid_argument("Invalid color format: " + colorString);
+    }
+
+    std::string red = colorString.substr(1, 2);
+    std::string green = colorString.substr(3, 2);
+    std::string blue = colorString.substr(5, 2);
+
+    return {
+        stringHexToInt(red),
+        stringHexToInt(green),
+        stringHexToInt(blue),
+    };
 }
