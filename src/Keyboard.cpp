@@ -506,7 +506,7 @@ void Keyboard::markShortNotes(std::vector<MidiKeyboardEvent> &events)
 
             int tempTick = std::get<0>(it->second);
             int tempIndex = std::get<1>(it->second);
-            if (std::abs(static_cast<int32_t>(tempTick) - static_cast<int32_t>(event.tick) < 2))
+            if (std::abs(static_cast<int32_t>(tempTick) - static_cast<int32_t>(event.tick)) < 2)
             {
                 // 255 means to me, ignore these events, both on and off
                 events[tempIndex].key = 255;
