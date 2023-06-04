@@ -8,26 +8,40 @@
 #include <fstream>
 #include <cstring>
 
-Keyboard::Keyboard(uint32_t octaveWidthInPixels, uint32_t firstOctaveAt, std::array<RGB, 4> noteColors, TrackMode mode) : octaveWidthInPixels(octaveWidthInPixels), firstOctaveAt(firstOctaveAt), noteColors(noteColors), mode(mode)
+Keyboard::Keyboard(double octaveWidthInPixels, uint32_t firstOctaveAt, std::array<RGB, 4> noteColors, TrackMode mode) : octaveWidthInPixels(octaveWidthInPixels), firstOctaveAt(firstOctaveAt), noteColors(noteColors), mode(mode)
 {
 
-    double whiteNoteWidth = static_cast<double>(this->octaveWidthInPixels / numOfWhiteKeysInOctave);
+    double whiteNoteWidth = this->octaveWidthInPixels / numOfWhiteKeysInOctave;
+    double blackNoteWidth = whiteNoteWidth * 0.7;
 
     if (this->mode == TrackMode::FallingNotes)
     {
         double whiteNoteHalfWidth = whiteNoteWidth / 2;
 
+        // notesHalfWidths[static_cast<int>(Key::C)] = whiteNoteHalfWidth;
+        // notesHalfWidths[static_cast<int>(Key::Db)] = whiteNoteWidth;
+        // notesHalfWidths[static_cast<int>(Key::D)] = whiteNoteWidth + whiteNoteHalfWidth;
+        // notesHalfWidths[static_cast<int>(Key::Eb)] = whiteNoteWidth * 2;
+        // notesHalfWidths[static_cast<int>(Key::E)] = (whiteNoteWidth * 2) + whiteNoteHalfWidth;
+        // notesHalfWidths[static_cast<int>(Key::F)] = (whiteNoteWidth * 3) + whiteNoteHalfWidth;
+        // notesHalfWidths[static_cast<int>(Key::Gb)] = whiteNoteWidth * 4;
+        // notesHalfWidths[static_cast<int>(Key::G)] = (whiteNoteWidth * 4) + whiteNoteHalfWidth;
+        // notesHalfWidths[static_cast<int>(Key::Ab)] = whiteNoteWidth * 5;
+        // notesHalfWidths[static_cast<int>(Key::A)] = (whiteNoteWidth * 5) + whiteNoteHalfWidth;
+        // notesHalfWidths[static_cast<int>(Key::Bb)] = whiteNoteWidth * 6;
+        // notesHalfWidths[static_cast<int>(Key::B)] = (whiteNoteWidth * 6) + whiteNoteHalfWidth;
+
         notesHalfWidths[static_cast<int>(Key::C)] = whiteNoteHalfWidth;
-        notesHalfWidths[static_cast<int>(Key::Db)] = whiteNoteWidth;
+        notesHalfWidths[static_cast<int>(Key::Db)] = whiteNoteHalfWidth + (blackNoteWidth / 2);
         notesHalfWidths[static_cast<int>(Key::D)] = whiteNoteWidth + whiteNoteHalfWidth;
-        notesHalfWidths[static_cast<int>(Key::Eb)] = whiteNoteWidth * 2;
+        notesHalfWidths[static_cast<int>(Key::Eb)] = ((whiteNoteWidth * 2) + whiteNoteHalfWidth - (blackNoteWidth / 2));
         notesHalfWidths[static_cast<int>(Key::E)] = (whiteNoteWidth * 2) + whiteNoteHalfWidth;
         notesHalfWidths[static_cast<int>(Key::F)] = (whiteNoteWidth * 3) + whiteNoteHalfWidth;
-        notesHalfWidths[static_cast<int>(Key::Gb)] = whiteNoteWidth * 4;
+        notesHalfWidths[static_cast<int>(Key::Gb)] = ((whiteNoteWidth * 3) + whiteNoteHalfWidth + (blackNoteWidth / 2));
         notesHalfWidths[static_cast<int>(Key::G)] = (whiteNoteWidth * 4) + whiteNoteHalfWidth;
         notesHalfWidths[static_cast<int>(Key::Ab)] = whiteNoteWidth * 5;
         notesHalfWidths[static_cast<int>(Key::A)] = (whiteNoteWidth * 5) + whiteNoteHalfWidth;
-        notesHalfWidths[static_cast<int>(Key::Bb)] = whiteNoteWidth * 6;
+        notesHalfWidths[static_cast<int>(Key::Bb)] = ((whiteNoteWidth * 6) + whiteNoteHalfWidth - (blackNoteWidth / 2));
         notesHalfWidths[static_cast<int>(Key::B)] = (whiteNoteWidth * 6) + whiteNoteHalfWidth;
 
         this->bottomRangeOfNoteDetection = 5;
@@ -40,7 +54,7 @@ Keyboard::Keyboard(uint32_t octaveWidthInPixels, uint32_t firstOctaveAt, std::ar
         constexpr double percentageOfWhiteKeys = 1 - percentageOfBlackKeys;
         constexpr double percentageOfOneBlackKey = percentageOfBlackKeys / numOfBlackKeysInOctave;
         constexpr double percentageOfOneWhiteKey = percentageOfWhiteKeys / numOfWhiteKeysInOctave;
-        uint8_t currentPosition = 5;
+        double currentPosition = 5;
 
         notesHalfWidths[static_cast<int>(Key::C)] = currentPosition;
 
@@ -94,19 +108,19 @@ Keyboard::~Keyboard()
     }
 }
 
-uint32_t Keyboard::octaveNumber(uint32_t noteXPosition)
-{
-    if (noteXPosition < firstOctaveAt)
-    {
-        return 0;
-    }
+// uint32_t Keyboard::octaveNumber(uint32_t noteXPosition)
+// {
+//     if (noteXPosition < firstOctaveAt)
+//     {
+//         return 0;
+//     }
 
-    uint32_t octave = static_cast<uint32_t>(ceil((double)(noteXPosition - firstOctaveAt) / octaveWidthInPixels));
+//     uint32_t octave = static_cast<uint32_t>(ceil((double)(noteXPosition - firstOctaveAt) / octaveWidthInPixels));
 
-    octave -= 1; // make it 0 based;
+//     octave -= 1; // make it 0 based;
 
-    return octave;
-}
+//     return octave;
+// }
 
 std::pair<bool, bool> Keyboard::isThisANoteONEvent(const std::vector<uint8_t> &possibleNote, bool expectBemol)
 {
@@ -220,7 +234,6 @@ std::vector<std::tuple<uint8_t, bool>> Keyboard::getNoteOnEvents(const std::vect
                 {
                     pointerToLine[lowerBoundStart] = 125;
                 }
-
                 uint32_t currentMidiNote = 24 + (12 * currentOctave) + note;
                 noteOnEvents.push_back({currentMidiNote, noteCheckResult.first});
             }

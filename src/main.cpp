@@ -10,7 +10,7 @@
 
 int main(int argc, char *argv[])
 {
-    if (argc != 9)
+    if (argc != 10)
     {
         std::cout << "Incorrect usage. " + std::string(argv[1]) << std::endl;
         return EXIT_FAILURE;
@@ -18,8 +18,9 @@ int main(int argc, char *argv[])
 
     std::string h264FileName = argv[1];
     TrackMode trackMode = std::string(argv[2]) == "keys" ? TrackMode::TrackKeys : TrackMode::FallingNotes;
-    int octaveLength = std::stoi(argv[3]);        // 310;
-    int firstOctaveStartsAt = std::stoi(argv[4]); // 187;
+    int firstOctaveStartsAt = std::stoi(argv[3]); // 187;
+    int octavesLength = std::stoi(argv[4]);       // 310;
+    int numOfOctaves = std::stoi(argv[5]);
 
     RawFrame::height = (trackMode == TrackMode::TrackKeys) ? 1 : 8;
     uint8_t yCoordsPercentage = (trackMode == TrackMode::TrackKeys) ? 85 : 50;
@@ -31,28 +32,13 @@ int main(int argc, char *argv[])
     constexpr auto rhwk = static_cast<int>(Keyboard::NoteColorIndex::RightHandWhiteKey);
     constexpr auto rhbk = static_cast<int>(Keyboard::NoteColorIndex::RightHandBlackKey);
 
-    noteColors[lhwk] = stringToRGB(argv[5]);
-    noteColors[lhbk] = stringToRGB(argv[6]);
-    noteColors[rhwk] = stringToRGB(argv[7]);
-    noteColors[rhbk] = stringToRGB(argv[8]);
+    noteColors[lhwk] = stringToRGB(argv[6]);
+    noteColors[lhbk] = stringToRGB(argv[7]);
+    noteColors[rhwk] = stringToRGB(argv[8]);
+    noteColors[rhbk] = stringToRGB(argv[9]);
 
-    // if (trackMode == TrackMode::FallingNotes)
-    // {
-
-    //     noteColors[lhwk] = {151, 116, 160}; //#9774A0
-    //     noteColors[lhbk] = {103, 80, 109};  //#67506D
-    //     noteColors[rhwk] = {177, 144, 94};  //#B1905E
-    //     noteColors[rhbk] = {177, 109, 48};  //#B16D30
-    // }
-    // else
-    // {
-    //     noteColors[lhwk] = {188, 87, 99};  //#BC5763
-    //     noteColors[lhbk] = {188, 87, 99};  //#BC5763
-    //     noteColors[rhwk] = {136, 195, 86}; //#88C356
-    //     noteColors[rhbk] = {92, 155, 42};  //#5C9B2A
-    // }
-
-    Keyboard keyboard(octaveLength, firstOctaveStartsAt, noteColors, trackMode);
+    double octaveWidthInPixels = static_cast<double>(octavesLength) / numOfOctaves;
+    Keyboard keyboard(octaveWidthInPixels, firstOctaveStartsAt, noteColors, trackMode);
     ManagedMidiFile midiFile("./didThisAllPayOff.mid");
     H264Decoder decoder(h264FileName, 3);
 
@@ -70,7 +56,7 @@ int main(int argc, char *argv[])
 
             uint32_t previousTick = 0;
 
-            // snap notes close to each other and add them to the right list (left and right)
+            // snap notes close to each other and add them to the correct list (left and right)
             for (uint32_t i = 0; i < events.size(); i++)
             {
                 MidiKeyboardEvent event = events[i];

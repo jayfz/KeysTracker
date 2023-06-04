@@ -3,4 +3,6 @@ raw-frames/
 *.h264
 *.mkv
 *.mid
+*.jpeg
+*.jpg
 KeysTracker

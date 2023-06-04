@@ -9,8 +9,9 @@
       "args": [
         "./barfus.h264",
         "keys",
-        "172",
-        "50",
+        "47",
+        "1207",
+        "7",
         "hBC5763",
         "hBC5763",
         "h88C356",
@@ -47,12 +48,52 @@
       "args": [
         "./test.h264",
         "falling-notes",
-        "310",
         "187",
+        "1551",
+        "5",
         "h9774A0",
         "h67506D",
         "hB1905E",
         "hB16D30"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      // "preLaunchTask": "cppbuild",
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        },
+        {
+          "description": "Set Disassembly Flavor to Intel",
+          "text": "-gdb-set disassembly-flavor intel",
+          "ignoreFailures": true
+        }
+      ],
+      // "preLaunchTask": "make",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "miDebuggerArgs": "-q -ex quit; wait() { fg >/dev/null; }; /bin/gdb -q --interpreter=mi"
+    },
+    {
+      "name": "Test run: Toy Story",
+      "type": "cppdbg",
+      "request": "launch",
+      // "program": "${fileDirname}/${fileBasenameNoExtension}",
+      "program": "${workspaceFolder}/build/src/KeysTracker",
+      "args": [
+        "./toy.h264",
+        "falling-notes",
+        "0",
+        "1737",
+        "4",
+        "hA4DCF1",
+        "h90CBE5",
+        "hB0F4BC",
+        "h99E3A5"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
