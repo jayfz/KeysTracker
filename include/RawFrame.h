@@ -9,7 +9,7 @@ class RawFrame
 {
 
 public:
-    RawFrame(uint32_t frameNumber);
+    RawFrame(uint32_t frameNumber, uint32_t originalWidth, uint32_t originalHeight, uint8_t *decodedFrame);
     RawFrame(const RawFrame &other) = delete;
     RawFrame &operator=(const RawFrame &other) = delete;
     ~RawFrame();
@@ -20,11 +20,11 @@ public:
     uint16_t getFrameNumber() const;
 
     void save() const;
-    void copyData(const uint8_t *buffer);
     static void saveBigFormatFrame(const std::vector<std::unique_ptr<RawFrame>> &collection);
 
     static uint32_t width;
     static uint32_t height;
+    static uint32_t copyFromYCoordsPercentage;
 
 private:
     uint32_t frameNumber;

@@ -39,7 +39,7 @@ H264Decoder::~H264Decoder()
         {
             av_packet_free(&this->packet);
             this->packet = nullptr;
-            processFrame(0); // at the end we need to "flush the decoder", that's done calling processFrame with this->packet as nullptr; This functions parameter in this case dont matter
+            processFrame(); // at the end we need to "flush the decoder", that's done calling processFrame with this->packet as nullptr
         }
 
     if (this->parser)
@@ -80,7 +80,7 @@ bool H264Decoder::wasInitializedCorrectly()
     return correct;
 }
 
-void H264Decoder::decode(uint8_t yPositionPercentage)
+void H264Decoder::decode()
 {
     std::ifstream inputFile;
     inputFile.open(this->fileName, std::ios_base::binary);
@@ -109,7 +109,7 @@ void H264Decoder::decode(uint8_t yPositionPercentage)
 
             if (this->packet->size)
             {
-                shouldStopDecoding = this->processFrame(yPositionPercentage);
+                shouldStopDecoding = this->processFrame();
                 if (shouldStopDecoding)
                     break;
             }
@@ -120,7 +120,7 @@ void H264Decoder::decode(uint8_t yPositionPercentage)
     }
 }
 
-bool H264Decoder::processFrame(uint8_t yPositionPercentage)
+bool H264Decoder::processFrame()
 {
 
     int sendPacketResult;
@@ -158,26 +158,10 @@ bool H264Decoder::processFrame(uint8_t yPositionPercentage)
         // display_picture_number -> display order
         if ((static_cast<uint32_t>(this->frame->coded_picture_number) >= this->startingFrom) && this->numFramesDecodedSofar < this->numFramesToDecode)
         {
-            auto rawFrame = std::make_unique<RawFrame>(this->frame->coded_picture_number);
-            size_t copyStartingFrom = (this->frame->width * 3) * ((this->frame->height * yPositionPercentage) / 100);
-            rawFrame->copyData(dst_data[0] + copyStartingFrom);
-            this->numFramesDecodedSofar += 1;
+            auto rawFrame = std::make_unique<RawFrame>(this->frame->coded_picture_number, this->frame->width, this->frame->height, dst_data[0]);
             frameCollection.push_back(move(rawFrame));
-            // std::cout << "Proccessed frame number " << this->numFramesDecodedSofar << std::endl;
+            this->numFramesDecodedSofar += 1;
             std::cout << "Proccessed frame number " << this->frame->coded_picture_number << std::endl;
-        }
-
-        // take a sample frame
-        if (this->numFramesDecodedSofar == 30)
-        {
-            std::string outFileName = "./raw-frames/frame-30.ppm";
-            std::ofstream outputFrameFile(outFileName, std::ofstream::binary);
-
-            outputFrameFile << "P6\n"
-                            << this->frame->width << " " << this->frame->height << "\n"
-                            << 255 << "\n";
-
-            outputFrameFile.write(reinterpret_cast<char *>(dst_data[0]), this->frame->width * this->frame->height * 3);
         }
 
         av_freep(&dst_data[0]);

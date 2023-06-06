@@ -22,8 +22,17 @@ int main(int argc, char *argv[])
     int octavesLength = std::stoi(argv[4]);       // 310;
     int numOfOctaves = std::stoi(argv[5]);
 
-    RawFrame::height = (trackMode == TrackMode::TrackKeys) ? 1 : 8;
-    uint8_t yCoordsPercentage = (trackMode == TrackMode::TrackKeys) ? 80 : 50;
+    if (trackMode == TrackMode::TrackKeys)
+    {
+        RawFrame::height = 1;
+        RawFrame::copyFromYCoordsPercentage = 85;
+    }
+
+    if (trackMode == TrackMode::FallingNotes)
+    {
+        RawFrame::height = 8;
+        RawFrame::copyFromYCoordsPercentage = 50;
+    }
 
     std::array<RGB, 4> noteColors;
 
@@ -45,7 +54,7 @@ int main(int argc, char *argv[])
     if (decoder.wasInitializedCorrectly())
     {
 
-        decoder.decode(yCoordsPercentage);
+        decoder.decode();
         std::vector<MidiKeyboardEvent> events;
 
         keyboard.generateMidiEvents(decoder.getFrameCollection(), events);

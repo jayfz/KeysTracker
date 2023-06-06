@@ -29,7 +29,7 @@ public:
     H264Decoder(const H264Decoder &other) = delete;
     H264Decoder &operator=(const H264Decoder &other) = delete;
     bool wasInitializedCorrectly();
-    void decode(uint8_t yPositionPercentage);
+    void decode();
     const std::vector<std::unique_ptr<RawFrame>> &getFrameCollection() const;
 
 private:
@@ -49,7 +49,7 @@ private:
     uint8_t inbuf[INBUF_SIZE + AV_INPUT_BUFFER_PADDING_SIZE];
     SwsContext *swsContext = nullptr;
 
-    bool processFrame(uint8_t yPositionPercentage);
+    bool processFrame();
     SwsContext *getSWSContext();
 };
 

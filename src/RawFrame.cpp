@@ -6,8 +6,15 @@
 
 uint32_t RawFrame::width = 0;
 uint32_t RawFrame::height = 0;
+uint32_t RawFrame::copyFromYCoordsPercentage = 0;
 
-RawFrame::RawFrame(uint32_t frameNumber) : frameNumber(frameNumber) {}
+RawFrame::RawFrame(uint32_t frameNumber, uint32_t originalWidth, uint32_t originalHeight, uint8_t *decodedFrame) : frameNumber(frameNumber)
+{
+    this->data = new uint8_t[this->getFrameSize()];
+    uint32_t line = ((originalHeight * RawFrame::copyFromYCoordsPercentage) / 100);
+    size_t copyStartingFrom = (originalWidth * 3) * line;
+    std::memcpy(this->data, decodedFrame + copyStartingFrom, this->getFrameSize());
+}
 RawFrame::~RawFrame()
 {
     if (data)
@@ -49,15 +56,6 @@ void RawFrame::save() const
 std::size_t RawFrame::getFrameSize() const
 {
     return width * height * 3;
-}
-
-void RawFrame::copyData(const uint8_t *buffer)
-{
-    if (this->data)
-        return;
-
-    this->data = new uint8_t[this->getFrameSize()];
-    std::memcpy(this->data, buffer, this->getFrameSize());
 }
 
 void RawFrame::saveBigFormatFrame(const std::vector<std::unique_ptr<RawFrame>> &collection)
