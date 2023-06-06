@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     int numOfOctaves = std::stoi(argv[5]);
 
     RawFrame::height = (trackMode == TrackMode::TrackKeys) ? 1 : 8;
-    uint8_t yCoordsPercentage = (trackMode == TrackMode::TrackKeys) ? 85 : 50;
+    uint8_t yCoordsPercentage = (trackMode == TrackMode::TrackKeys) ? 80 : 50;
 
     std::array<RGB, 4> noteColors;
 
