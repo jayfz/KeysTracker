@@ -1,14 +1,15 @@
 #include <cmath>
 #include <array>
 #include <iostream>
+#include "KeyboardNotesColors.h"
 #include "Keyboard.h"
-#include "Utils.h"
+#include "RGBColor.h"
 #include <tuple>
 #include <map>
 #include <fstream>
 #include <cstring>
 
-Keyboard::Keyboard(double octaveWidthInPixels, uint32_t firstOctaveAt, std::array<RGB, 4> noteColors, TrackMode mode) : octaveWidthInPixels(octaveWidthInPixels), firstOctaveAt(firstOctaveAt), noteColors(noteColors), mode(mode)
+Keyboard::Keyboard(double octaveWidthInPixels, uint32_t firstOctaveAt, KeyboardNotesColors noteColors, TrackMode mode) : octaveWidthInPixels(octaveWidthInPixels), firstOctaveAt(firstOctaveAt), noteColors(noteColors), mode(mode)
 {
 
     double whiteNoteWidth = this->octaveWidthInPixels / numOfWhiteKeysInOctave;
@@ -108,20 +109,6 @@ Keyboard::~Keyboard()
     }
 }
 
-// uint32_t Keyboard::octaveNumber(uint32_t noteXPosition)
-// {
-//     if (noteXPosition < firstOctaveAt)
-//     {
-//         return 0;
-//     }
-
-//     uint32_t octave = static_cast<uint32_t>(ceil((double)(noteXPosition - firstOctaveAt) / octaveWidthInPixels));
-
-//     octave -= 1; // make it 0 based;
-
-//     return octave;
-// }
-
 std::pair<bool, bool> Keyboard::isThisANoteONEvent(const std::vector<uint8_t> &possibleNote, bool expectBemol)
 {
 
@@ -130,7 +117,7 @@ std::pair<bool, bool> Keyboard::isThisANoteONEvent(const std::vector<uint8_t> &p
         return {false, false};
     }
 
-    std::vector<RGB> rgbColors;
+    std::vector<RGBColor> rgbColors;
 
     for (uint64_t i = 0; i < possibleNote.size(); i += 3)
     {
@@ -141,30 +128,22 @@ std::pair<bool, bool> Keyboard::isThisANoteONEvent(const std::vector<uint8_t> &p
         rgbColors.push_back({red, green, blue});
     }
 
-    RGB averageRGBColor;
+    RGBColor averageRGBColor{0, 0, 0};
 
-    if (areFirstTwoPixelsDifferentFromLastTwoPixels(rgbColors) && this->mode == TrackMode::FallingNotes)
+    if (!(RGBColor::areFirstTwoPixelsDifferentFromLastTwoPixels(rgbColors) && this->mode == TrackMode::FallingNotes))
     {
-        averageRGBColor = {0, 0, 0};
-    }
-    else
-    {
-        averageRGBColor = calculateAverageRGB(rgbColors);
+        averageRGBColor = RGBColor::calculateAverage(rgbColors);
     }
 
-    int leftHand = 0;
-    int rightHand = 0;
     bool isLeftHandKeyPressed = false;
     bool isRightHandKeyPressed = false;
 
-    leftHand = static_cast<int>(expectBemol ? NoteColorIndex::LeftHandBlackKey : NoteColorIndex::LeftHandWhiteKey);
-    rightHand = static_cast<int>(expectBemol ? NoteColorIndex::RightHandBlackKey : NoteColorIndex::RightHandWhiteKey);
-
+    RGBColor leftHandColor = (expectBemol ? noteColors.getLeftHandBlackKeyColor() : noteColors.getLeftHandWhiteKeyColor());
+    RGBColor rightHandColor = (expectBemol ? noteColors.getRightHandBlackKeyColor() : noteColors.getRightHandWhiteKeyColor());
     bool beStrict = this->mode == TrackMode::FallingNotes ? true : false;
 
-    isLeftHandKeyPressed = isColorCloseEnoughToReferenceRGB(this->noteColors[leftHand], averageRGBColor, beStrict);
-
-    isRightHandKeyPressed = isColorCloseEnoughToReferenceRGB(this->noteColors[rightHand], averageRGBColor, beStrict);
+    isLeftHandKeyPressed = leftHandColor.isColorCloseEnoughToReference(averageRGBColor, beStrict);
+    isRightHandKeyPressed = rightHandColor.isColorCloseEnoughToReference(averageRGBColor, beStrict);
 
     return {isLeftHandKeyPressed, isRightHandKeyPressed};
 }

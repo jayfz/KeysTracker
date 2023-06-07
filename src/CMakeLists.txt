@@ -5,10 +5,11 @@ add_executable(KeysTracker)
 target_sources(KeysTracker PUBLIC
     H264Decoder.cpp
     Keyboard.cpp
+    KeyboardNotesColors.cpp
     main.cpp
     ManagedMidiFile.cpp
     RawFrame.cpp
-    Utils.cpp
+    RGBColor.cpp
 )
 
 ##main executable include directory  (headers)

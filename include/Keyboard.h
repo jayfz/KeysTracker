@@ -8,7 +8,8 @@
 #include <memory>
 
 #include "RawFrame.h"
-#include "Utils.h"
+#include "RGBColor.h"
+#include "KeyboardNotesColors.h"
 
 struct MidiKeyboardEvent
 {
@@ -28,18 +29,14 @@ enum class TrackMode
 class Keyboard
 {
 public:
-    Keyboard(double octaveWidthInPixels, uint32_t firstOctaveAt, std::array<RGB, 4> noteColors, TrackMode mode);
+    Keyboard(double octaveWidthInPixels, uint32_t firstOctaveAt, KeyboardNotesColors noteColors, TrackMode mode);
     ~Keyboard();
     uint32_t getNote(uint32_t width);
     std::vector<std::tuple<uint8_t, bool>> getNoteOnEvents(const std::vector<uint8_t> &pixelLine);
-
     std::pair<bool, bool> isThisANoteONEvent(const std::vector<uint8_t> &possibleNote, bool expectBemol);
-
     uint32_t numOfOctavesInFrame(uint32_t frameLength);
     void generateMidiEvents(const std::vector<std::unique_ptr<RawFrame>> &collection, std::vector<MidiKeyboardEvent> &events);
     void printColoredImage();
-
-    static void markShortNotes(std::vector<MidiKeyboardEvent> &events);
 
     enum class Key
     {
@@ -57,27 +54,19 @@ public:
         B
     };
 
-    enum class NoteColorIndex
-    {
-        LeftHandWhiteKey,
-        LeftHandBlackKey,
-        RightHandWhiteKey,
-        RightHandBlackKey
-    };
-
     static bool isBlackKey(Key note);
+    static void markShortNotes(std::vector<MidiKeyboardEvent> &events);
 
 private:
     double octaveWidthInPixels;
     uint32_t firstOctaveAt;
-    std::array<RGB, 4> noteColors;
+    KeyboardNotesColors noteColors;
     TrackMode mode;
     std::array<double, 12> notesHalfWidths;
     uint32_t bottomRangeOfNoteDetection;
     uint32_t upperRangeOfNoteDetection;
     static const uint32_t numOfWhiteKeysInOctave = 7;
     static const uint32_t numOfBlackKeysInOctave = 5;
-    // uint32_t octaveNumber(uint32_t width);
 
     void generateMidiEventsByTrackingKeys(const std::vector<std::unique_ptr<RawFrame>> &collection, std::vector<MidiKeyboardEvent> &events);
     void generateMidiEventsByTrackingFallingNotes(const std::vector<std::unique_ptr<RawFrame>> &collection, std::vector<MidiKeyboardEvent> &events);

@@ -4,7 +4,8 @@
 #include <vector>
 #include <MidiEvent.h>
 #include "H264Decoder.h"
-#include "Utils.h"
+#include "RGBColor.h"
+#include "KeyboardNotesColors.h"
 #include "Keyboard.h"
 #include "ManagedMidiFile.h"
 
@@ -34,18 +35,7 @@ int main(int argc, char *argv[])
         RawFrame::copyFromYCoordsPercentage = 50;
     }
 
-    std::array<RGB, 4> noteColors;
-
-    constexpr auto lhwk = static_cast<int>(Keyboard::NoteColorIndex::LeftHandWhiteKey);
-    constexpr auto lhbk = static_cast<int>(Keyboard::NoteColorIndex::LeftHandBlackKey);
-    constexpr auto rhwk = static_cast<int>(Keyboard::NoteColorIndex::RightHandWhiteKey);
-    constexpr auto rhbk = static_cast<int>(Keyboard::NoteColorIndex::RightHandBlackKey);
-
-    noteColors[lhwk] = stringToRGB(argv[6]);
-    noteColors[lhbk] = stringToRGB(argv[7]);
-    noteColors[rhwk] = stringToRGB(argv[8]);
-    noteColors[rhbk] = stringToRGB(argv[9]);
-
+    KeyboardNotesColors noteColors(argv[6], argv[7], argv[8], argv[9]);
     double octaveWidthInPixels = static_cast<double>(octavesLength) / numOfOctaves;
     Keyboard keyboard(octaveWidthInPixels, firstOctaveStartsAt, noteColors, trackMode);
     ManagedMidiFile midiFile("./didThisAllPayOff.mid");
