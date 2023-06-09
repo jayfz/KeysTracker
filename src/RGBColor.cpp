@@ -89,11 +89,12 @@ RGBColor RGBColor::fromString(char *color)
 }
 bool RGBColor::isColorCloseEnoughToReference(RGBColor other, bool beStrict) const
 {
+
     bool redIsSimilar = false;
     bool greenIsSimilar = false;
     bool blueIsSimilar = false;
 
-    uint8_t fudgeFactor = beStrict ? 24 : 50;
+    uint8_t fudgeFactor = beStrict ? 24 : 36;
 
     if (std::abs(this->redChannel - other.redChannel) < fudgeFactor)
         redIsSimilar = true;

@@ -86,14 +86,14 @@
       "program": "${workspaceFolder}/build/src/KeysTracker",
       "args": [
         "./toy.h264",
-        "falling-notes",
+        "keys",
         "0",
         "1737",
         "4",
-        "hA4DCF1",
-        "h90CBE5",
-        "hB0F4BC",
-        "h99E3A5"
+        "h97D3E9",
+        "h5C9ED8",
+        "hA5DCC1",
+        "h73CF93"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",

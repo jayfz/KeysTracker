@@ -26,7 +26,8 @@ int main(int argc, char *argv[])
     if (trackMode == TrackMode::TrackKeys)
     {
         RawFrame::height = 1;
-        RawFrame::copyFromYCoordsPercentage = 85;
+        RawFrame::copyFromYCoordsPercentage = 75;
+        // RawFrame::copyFromYCoordsPercentage = 85;
     }
 
     if (trackMode == TrackMode::FallingNotes)
@@ -39,7 +40,7 @@ int main(int argc, char *argv[])
     double octaveWidthInPixels = static_cast<double>(octavesLength) / numOfOctaves;
     Keyboard keyboard(octaveWidthInPixels, firstOctaveStartsAt, noteColors, trackMode);
     ManagedMidiFile midiFile("./didThisAllPayOff.mid");
-    H264Decoder decoder(h264FileName, 3);
+    H264Decoder decoder(h264FileName, 30);
 
     if (decoder.wasInitializedCorrectly())
     {

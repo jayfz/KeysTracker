@@ -55,7 +55,7 @@ Keyboard::Keyboard(double octaveWidthInPixels, uint32_t firstOctaveAt, KeyboardN
         constexpr double percentageOfWhiteKeys = 1 - percentageOfBlackKeys;
         constexpr double percentageOfOneBlackKey = percentageOfBlackKeys / numOfBlackKeysInOctave;
         constexpr double percentageOfOneWhiteKey = percentageOfWhiteKeys / numOfWhiteKeysInOctave;
-        double currentPosition = 5;
+        double currentPosition = 10;
 
         notesHalfWidths[static_cast<int>(Key::C)] = currentPosition;
 
@@ -209,11 +209,19 @@ std::vector<std::tuple<uint8_t, bool>> Keyboard::getNoteOnEvents(const std::vect
 
             if (noteCheckResult.first || noteCheckResult.second)
             {
+                uint32_t currentMidiNote = 24 + (12 * currentOctave) + note;
+                if (currentMidiNote == 24 || currentMidiNote == 26)
+                {
+                    continue;
+                }
+
+                uint32_t debugColor = noteCheckResult.first ? 100 : 200;
+
                 for (uint32_t lowerBoundStart = lowerBound; lowerBoundStart < upperBound; lowerBoundStart++)
                 {
-                    pointerToLine[lowerBoundStart] = 125;
+                    pointerToLine[lowerBoundStart] = debugColor;
                 }
-                uint32_t currentMidiNote = 24 + (12 * currentOctave) + note;
+
                 noteOnEvents.push_back({currentMidiNote, noteCheckResult.first});
             }
         }
@@ -363,7 +371,7 @@ void Keyboard::generateMidiEventsByTrackingKeys(const std::vector<std::unique_pt
     };
 
     uint32_t absoluteTick = 0;
-    uint32_t tickStep = this->mode == TrackMode::FallingNotes ? 1 : 8;
+    uint32_t tickStep = 8;
     std::vector<uint8_t> pixelLine;
     class std::vector<std::tuple<uint8_t, bool>> previousEvents;
 
