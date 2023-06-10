@@ -19,8 +19,8 @@ public:
 private:
     RGBColor leftHandWhiteKey;
     RGBColor leftHandBlackKey;
-    RGBColor rightHandWhitekKey;
-    RGBColor rightHandBlackkKey;
+    RGBColor rightHandWhiteKey;
+    RGBColor rightHandBlackKey;
 };
 
 #endif

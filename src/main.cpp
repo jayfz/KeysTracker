@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     std::string h264FileName = argv[1];
     TrackMode trackMode = std::string(argv[2]) == "keys" ? TrackMode::TrackKeys : TrackMode::FallingNotes;
     int firstOctaveStartsAt = std::stoi(argv[3]); // 187;
-    int octavesLength = std::stoi(argv[4]);       // 310;
+    double octavesLength = std::stod(argv[4]);    // 310;
     int numOfOctaves = std::stoi(argv[5]);
 
     if (trackMode == TrackMode::TrackKeys)
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     }
 
     KeyboardNotesColors noteColors(argv[6], argv[7], argv[8], argv[9]);
-    double octaveWidthInPixels = static_cast<double>(octavesLength) / numOfOctaves;
+    double octaveWidthInPixels = octavesLength / numOfOctaves;
     Keyboard keyboard(octaveWidthInPixels, firstOctaveStartsAt, noteColors, trackMode);
     ManagedMidiFile midiFile("./didThisAllPayOff.mid");
     H264Decoder decoder(h264FileName, 30);

@@ -2,11 +2,11 @@
 
 KeyboardNotesColors::KeyboardNotesColors(char *leftHandWhiteKey,
                                          char *leftHandBlackKey,
-                                         char *rightHandWhitekKey,
-                                         char *rightHandBlackkKey) : leftHandWhiteKey(RGBColor::fromString(leftHandWhiteKey)),
-                                                                     leftHandBlackKey(RGBColor::fromString(leftHandBlackKey)),
-                                                                     rightHandWhitekKey(RGBColor::fromString(rightHandWhitekKey)),
-                                                                     rightHandBlackkKey(RGBColor::fromString(rightHandBlackkKey))
+                                         char *rightHandWhiteKey,
+                                         char *rightHandBlackKey) : leftHandWhiteKey(RGBColor::fromString(leftHandWhiteKey)),
+                                                                    leftHandBlackKey(RGBColor::fromString(leftHandBlackKey)),
+                                                                    rightHandWhiteKey(RGBColor::fromString(rightHandWhiteKey)),
+                                                                    rightHandBlackKey(RGBColor::fromString(rightHandBlackKey))
 {
 }
 
@@ -20,9 +20,9 @@ RGBColor KeyboardNotesColors::getLeftHandBlackKeyColor() const
 }
 RGBColor KeyboardNotesColors::getRightHandWhiteKeyColor() const
 {
-    return this->rightHandWhitekKey;
+    return this->rightHandWhiteKey;
 }
 RGBColor KeyboardNotesColors::getRightHandBlackKeyColor() const
 {
-    return this->rightHandBlackkKey;
+    return this->rightHandBlackKey;
 }

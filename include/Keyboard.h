@@ -31,7 +31,6 @@ class Keyboard
 public:
     Keyboard(double octaveWidthInPixels, uint32_t firstOctaveAt, KeyboardNotesColors noteColors, TrackMode mode);
     ~Keyboard();
-    uint32_t getNote(uint32_t width);
     std::vector<std::tuple<uint8_t, bool>> getNoteOnEvents(const std::vector<uint8_t> &pixelLine);
     std::pair<bool, bool> isThisANoteONEvent(const std::vector<uint8_t> &possibleNote, bool expectBemol);
     uint32_t numOfOctavesInFrame(uint32_t frameLength);

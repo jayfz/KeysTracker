@@ -12,13 +12,15 @@ public:
     static RGBColor calculateAverage(const std::vector<RGBColor> &colors);
     static bool areFirstTwoPixelsDifferentFromLastTwoPixels(const std::vector<RGBColor> &colors);
     static RGBColor fromString(char *color);
-    static uint8_t stringHexToInt(const std::string &colorChannel);
+
     bool isColorCloseEnoughToReference(RGBColor other, bool beStrict) const;
 
 private:
     uint8_t redChannel;
     uint8_t greenChannel;
     uint8_t blueChannel;
+
+    static uint8_t stringHexToInt(const std::string &colorChannel);
 };
 
 #endif

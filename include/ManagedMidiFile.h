@@ -15,8 +15,6 @@ public:
     void addLeftHandEvent(int atick, int key, int velocity = 0);
     void save();
 
-    static int fotogramToTicks(int numFotograms) noexcept;
-
 private:
     smf::MidiFile midiFile;
     std::string outFileName;
