@@ -153,12 +153,11 @@ bool H264Decoder::processFrame()
         av_image_alloc(dst_data, dst_linesize, this->frame->width, this->frame->height, AV_PIX_FMT_RGB24, 1);
         sws_scale(swsctx, frame->data, frame->linesize, 0, this->frame->height, dst_data, dst_linesize);
 
-        RawFrame::width = this->frame->width;
         // coded_picture_number -> bit order
         // display_picture_number -> display order
         if ((static_cast<uint32_t>(this->frame->coded_picture_number) >= this->startingFrom) && this->numFramesDecodedSofar < this->numFramesToDecode)
         {
-            auto rawFrame = std::make_unique<RawFrame>(this->frame->coded_picture_number, this->frame->width, this->frame->height, dst_data[0]);
+            auto rawFrame = std::make_unique<RawFrame>(this->frame->coded_picture_number, dst_data[0]);
             frameCollection.push_back(move(rawFrame));
             this->numFramesDecodedSofar += 1;
             std::cout << "Proccessed frame number " << this->frame->coded_picture_number << std::endl;

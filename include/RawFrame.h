@@ -9,7 +9,7 @@ class RawFrame
 {
 
 public:
-    RawFrame(uint32_t frameNumber, uint32_t originalWidth, uint32_t originalHeight, uint8_t *decodedFrame);
+    RawFrame(uint32_t frameNumber, uint8_t *decodedFrame);
     RawFrame(const RawFrame &other) = delete;
     RawFrame &operator=(const RawFrame &other) = delete;
     ~RawFrame();
@@ -24,7 +24,7 @@ public:
 
     static uint32_t width;
     static uint32_t height;
-    static uint32_t copyFromYCoordsPercentage;
+    static uint32_t copyFromLine;
 
 private:
     uint32_t frameNumber;

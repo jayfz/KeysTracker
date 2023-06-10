@@ -2,14 +2,15 @@
 #define KEYBOARD_NOTES_COLORS_H
 
 #include "RGBColor.h"
+#include <string>
 class KeyboardNotesColors
 {
 
 public:
-    KeyboardNotesColors(char *leftHandWhiteKey,
-                        char *leftHandBlackKey,
-                        char *rightHandWhitekKey,
-                        char *rightHandBlackkKey);
+    KeyboardNotesColors(std::string leftHandWhiteKey,
+                        std::string leftHandBlackKey,
+                        std::string rightHandWhitekKey,
+                        std::string rightHandBlackkKey);
 
     RGBColor getLeftHandWhiteKeyColor() const;
     RGBColor getLeftHandBlackKeyColor() const;

@@ -10,6 +10,8 @@ target_sources(KeysTracker PUBLIC
     ManagedMidiFile.cpp
     RawFrame.cpp
     RGBColor.cpp
+    ArgumentParser.cpp
+    ProgramOptions.cpp
 )
 
 ##main executable include directory  (headers)

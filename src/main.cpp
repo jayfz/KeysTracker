@@ -8,47 +8,52 @@
 #include "KeyboardNotesColors.h"
 #include "Keyboard.h"
 #include "ManagedMidiFile.h"
+#include "ArgumentParser.h"
+#include "ProgramOptions.h"
 
 int main(int argc, char *argv[])
 {
-    if (argc != 10)
+    ProgramOptions cliOptions(ArgumentParser(argc, argv));
+
+    if (!cliOptions.areValid())
     {
-        std::cout << "Incorrect usage. " + std::string(argv[1]) << std::endl;
+        cliOptions.reportErrors();
         return EXIT_FAILURE;
     }
 
-    std::string h264FileName = argv[1];
-    TrackMode trackMode = std::string(argv[2]) == "keys" ? TrackMode::TrackKeys : TrackMode::FallingNotes;
-    int firstOctaveStartsAt = std::stoi(argv[3]); // 187;
-    double octavesLength = std::stod(argv[4]);    // 310;
-    int numOfOctaves = std::stoi(argv[5]);
+    KeyboardNotesColors noteColors(
+        cliOptions.leftHandWhiteKeyColor,
+        cliOptions.leftHandBlackKeyColor,
+        cliOptions.rightHandWhiteKeyColor,
+        cliOptions.rightHandBlackKeyColor);
 
-    if (trackMode == TrackMode::TrackKeys)
+    RawFrame::height = cliOptions.rawFrameHeight;
+    RawFrame::width = cliOptions.rawFrameWidth;
+    RawFrame::copyFromLine = cliOptions.rawFrameCopyFromLine;
+
+    TrackMode trackMode = TrackMode::FallingNotes;
+
+    if (cliOptions.trackMode == "falling-notes")
     {
-        RawFrame::height = 1;
-        RawFrame::copyFromYCoordsPercentage = 75;
-        // RawFrame::copyFromYCoordsPercentage = 85;
+        trackMode = TrackMode::FallingNotes;
     }
 
-    if (trackMode == TrackMode::FallingNotes)
+    if (cliOptions.trackMode == "keys")
     {
-        RawFrame::height = 8;
-        RawFrame::copyFromYCoordsPercentage = 50;
+        trackMode = TrackMode::TrackKeys;
     }
 
-    KeyboardNotesColors noteColors(argv[6], argv[7], argv[8], argv[9]);
-    double octaveWidthInPixels = octavesLength / numOfOctaves;
-    Keyboard keyboard(octaveWidthInPixels, firstOctaveStartsAt, noteColors, trackMode);
-    ManagedMidiFile midiFile("./didThisAllPayOff.mid");
-    H264Decoder decoder(h264FileName, 30);
+    double octaveWidthInPixels = cliOptions.octavesLength / cliOptions.numOfOctaves;
+    H264Decoder decoder(cliOptions.videoStreamFileName, cliOptions.numberOfFramesToSkip);
 
     if (decoder.wasInitializedCorrectly())
     {
-
         decoder.decode();
         std::vector<MidiKeyboardEvent> events;
-
+        Keyboard keyboard(octaveWidthInPixels, cliOptions.firstOctaveAt, noteColors, trackMode);
         keyboard.generateMidiEvents(decoder.getFrameCollection(), events);
+        ManagedMidiFile midiFile(cliOptions.outFileName);
+
         // mark short notes for deletion
         if (trackMode == TrackMode::FallingNotes)
         {

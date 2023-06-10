@@ -1,12 +1,12 @@
 #include "KeyboardNotesColors.h"
 
-KeyboardNotesColors::KeyboardNotesColors(char *leftHandWhiteKey,
-                                         char *leftHandBlackKey,
-                                         char *rightHandWhiteKey,
-                                         char *rightHandBlackKey) : leftHandWhiteKey(RGBColor::fromString(leftHandWhiteKey)),
-                                                                    leftHandBlackKey(RGBColor::fromString(leftHandBlackKey)),
-                                                                    rightHandWhiteKey(RGBColor::fromString(rightHandWhiteKey)),
-                                                                    rightHandBlackKey(RGBColor::fromString(rightHandBlackKey))
+KeyboardNotesColors::KeyboardNotesColors(std::string leftHandWhiteKey,
+                                         std::string leftHandBlackKey,
+                                         std::string rightHandWhiteKey,
+                                         std::string rightHandBlackKey) : leftHandWhiteKey(RGBColor::fromString(leftHandWhiteKey)),
+                                                                          leftHandBlackKey(RGBColor::fromString(leftHandBlackKey)),
+                                                                          rightHandWhiteKey(RGBColor::fromString(rightHandWhiteKey)),
+                                                                          rightHandBlackKey(RGBColor::fromString(rightHandBlackKey))
 {
 }
 

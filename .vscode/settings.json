@@ -64,6 +64,8 @@
     "set": "cpp",
     "mutex": "cpp",
     "semaphore": "cpp",
-    "stop_token": "cpp"
+    "stop_token": "cpp",
+    "regex": "cpp",
+    "bitset": "cpp"
   }
 }

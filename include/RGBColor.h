@@ -11,7 +11,7 @@ public:
     RGBColor(uint8_t red, uint8_t green, uint8_t blue);
     static RGBColor calculateAverage(const std::vector<RGBColor> &colors);
     static bool areFirstTwoPixelsDifferentFromLastTwoPixels(const std::vector<RGBColor> &colors);
-    static RGBColor fromString(char *color);
+    static RGBColor fromString(std::string color);
 
     bool isColorCloseEnoughToReference(RGBColor other, bool beStrict) const;
 
