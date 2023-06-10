@@ -81,7 +81,7 @@ bool ProgramOptions::areValid() const
 
     return errors.empty();
 }
-bool ProgramOptions::reportErrors() const
+void ProgramOptions::reportErrors() const
 {
     for (const auto &error : this->errors)
     {

@@ -10,7 +10,7 @@ struct ProgramOptions
 
     ProgramOptions(ArgumentParser parser);
     bool areValid() const;
-    bool reportErrors() const;
+    void reportErrors() const;
 
     std::string videoStreamFileName;
     std::string trackMode;

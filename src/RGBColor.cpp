@@ -70,18 +70,17 @@ bool RGBColor::areFirstTwoPixelsDifferentFromLastTwoPixels(const std::vector<RGB
 
     return false;
 }
-RGBColor RGBColor::fromString(char *color)
+RGBColor RGBColor::fromString(std::string color)
 {
-    std::string colorString(color);
 
-    if (colorString.size() != 7 || colorString[0] != 'h')
+    if (color.size() != 7 || color[0] != 'h')
     {
-        throw std::invalid_argument("Invalid color format: " + colorString);
+        throw std::invalid_argument("Invalid color format: " + color);
     }
 
-    std::string red = colorString.substr(1, 2);
-    std::string green = colorString.substr(3, 2);
-    std::string blue = colorString.substr(5, 2);
+    std::string red = color.substr(1, 2);
+    std::string green = color.substr(3, 2);
+    std::string blue = color.substr(5, 2);
 
     return {RGBColor::stringHexToInt(red),
             RGBColor::stringHexToInt(green),
