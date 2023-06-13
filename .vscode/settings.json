@@ -66,6 +66,7 @@
     "semaphore": "cpp",
     "stop_token": "cpp",
     "regex": "cpp",
-    "bitset": "cpp"
+    "bitset": "cpp",
+    "pixelline": "c"
   }
 }

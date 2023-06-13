@@ -1,60 +1,77 @@
-#include <cmath>
-#include <array>
-#include <iostream>
-#include "KeyboardNotesColors.h"
 #include "Keyboard.h"
+#include "KeyboardNotesColors.h"
 #include "RGBColor.h"
-#include <tuple>
-#include <map>
-#include <fstream>
+#include <array>
+#include <cmath>
 #include <cstring>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <tuple>
 
-Keyboard::Keyboard(double octaveWidthInPixels, uint32_t firstOctaveAt, KeyboardNotesColors noteColors, TrackMode mode) : octaveWidthInPixels(octaveWidthInPixels), firstOctaveAt(firstOctaveAt), noteColors(noteColors), mode(mode)
+Keyboard::Keyboard(double octaveWidthInPixels, uint32_t firstOctaveAt,
+                   KeyboardNotesColors noteColors, TrackMode mode)
+    : octaveWidthInPixels(octaveWidthInPixels),
+      firstOctaveAt(firstOctaveAt),
+      noteColors(noteColors),
+      mode(mode)
 {
 
     double whiteNoteWidth = this->octaveWidthInPixels / numOfWhiteKeysInOctave;
     double blackNoteWidth = whiteNoteWidth * 0.7;
 
-    if (this->mode == TrackMode::FallingNotes)
-    {
+    if (this->mode == TrackMode::FallingNotes) {
         double whiteNoteHalfWidth = whiteNoteWidth / 2;
 
         // notesHalfWidths[static_cast<int>(Key::C)] = whiteNoteHalfWidth;
         // notesHalfWidths[static_cast<int>(Key::Db)] = whiteNoteWidth;
-        // notesHalfWidths[static_cast<int>(Key::D)] = whiteNoteWidth + whiteNoteHalfWidth;
-        // notesHalfWidths[static_cast<int>(Key::Eb)] = whiteNoteWidth * 2;
-        // notesHalfWidths[static_cast<int>(Key::E)] = (whiteNoteWidth * 2) + whiteNoteHalfWidth;
-        // notesHalfWidths[static_cast<int>(Key::F)] = (whiteNoteWidth * 3) + whiteNoteHalfWidth;
-        // notesHalfWidths[static_cast<int>(Key::Gb)] = whiteNoteWidth * 4;
-        // notesHalfWidths[static_cast<int>(Key::G)] = (whiteNoteWidth * 4) + whiteNoteHalfWidth;
+        // notesHalfWidths[static_cast<int>(Key::D)] = whiteNoteWidth +
+        // whiteNoteHalfWidth; notesHalfWidths[static_cast<int>(Key::Eb)] =
+        // whiteNoteWidth * 2; notesHalfWidths[static_cast<int>(Key::E)] =
+        // (whiteNoteWidth * 2) + whiteNoteHalfWidth;
+        // notesHalfWidths[static_cast<int>(Key::F)] = (whiteNoteWidth * 3) +
+        // whiteNoteHalfWidth; notesHalfWidths[static_cast<int>(Key::Gb)] =
+        // whiteNoteWidth * 4; notesHalfWidths[static_cast<int>(Key::G)] =
+        // (whiteNoteWidth * 4) + whiteNoteHalfWidth;
         // notesHalfWidths[static_cast<int>(Key::Ab)] = whiteNoteWidth * 5;
-        // notesHalfWidths[static_cast<int>(Key::A)] = (whiteNoteWidth * 5) + whiteNoteHalfWidth;
-        // notesHalfWidths[static_cast<int>(Key::Bb)] = whiteNoteWidth * 6;
-        // notesHalfWidths[static_cast<int>(Key::B)] = (whiteNoteWidth * 6) + whiteNoteHalfWidth;
+        // notesHalfWidths[static_cast<int>(Key::A)] = (whiteNoteWidth * 5) +
+        // whiteNoteHalfWidth; notesHalfWidths[static_cast<int>(Key::Bb)] =
+        // whiteNoteWidth * 6; notesHalfWidths[static_cast<int>(Key::B)] =
+        // (whiteNoteWidth * 6) + whiteNoteHalfWidth;
 
         notesHalfWidths[static_cast<int>(Key::C)] = whiteNoteHalfWidth;
-        notesHalfWidths[static_cast<int>(Key::Db)] = whiteNoteHalfWidth + (blackNoteWidth / 2);
+        notesHalfWidths[static_cast<int>(Key::Db)] =
+            whiteNoteHalfWidth + (blackNoteWidth / 2);
         notesHalfWidths[static_cast<int>(Key::D)] = whiteNoteWidth + whiteNoteHalfWidth;
-        notesHalfWidths[static_cast<int>(Key::Eb)] = ((whiteNoteWidth * 2) + whiteNoteHalfWidth - (blackNoteWidth / 2));
-        notesHalfWidths[static_cast<int>(Key::E)] = (whiteNoteWidth * 2) + whiteNoteHalfWidth;
-        notesHalfWidths[static_cast<int>(Key::F)] = (whiteNoteWidth * 3) + whiteNoteHalfWidth;
-        notesHalfWidths[static_cast<int>(Key::Gb)] = ((whiteNoteWidth * 3) + whiteNoteHalfWidth + (blackNoteWidth / 2));
-        notesHalfWidths[static_cast<int>(Key::G)] = (whiteNoteWidth * 4) + whiteNoteHalfWidth;
+        notesHalfWidths[static_cast<int>(Key::Eb)] =
+            ((whiteNoteWidth * 2) + whiteNoteHalfWidth - (blackNoteWidth / 2));
+        notesHalfWidths[static_cast<int>(Key::E)] =
+            (whiteNoteWidth * 2) + whiteNoteHalfWidth;
+        notesHalfWidths[static_cast<int>(Key::F)] =
+            (whiteNoteWidth * 3) + whiteNoteHalfWidth;
+        notesHalfWidths[static_cast<int>(Key::Gb)] =
+            ((whiteNoteWidth * 3) + whiteNoteHalfWidth + (blackNoteWidth / 2));
+        notesHalfWidths[static_cast<int>(Key::G)] =
+            (whiteNoteWidth * 4) + whiteNoteHalfWidth;
         notesHalfWidths[static_cast<int>(Key::Ab)] = whiteNoteWidth * 5;
-        notesHalfWidths[static_cast<int>(Key::A)] = (whiteNoteWidth * 5) + whiteNoteHalfWidth;
-        notesHalfWidths[static_cast<int>(Key::Bb)] = ((whiteNoteWidth * 6) + whiteNoteHalfWidth - (blackNoteWidth / 2));
-        notesHalfWidths[static_cast<int>(Key::B)] = (whiteNoteWidth * 6) + whiteNoteHalfWidth;
+        notesHalfWidths[static_cast<int>(Key::A)] =
+            (whiteNoteWidth * 5) + whiteNoteHalfWidth;
+        notesHalfWidths[static_cast<int>(Key::Bb)] =
+            ((whiteNoteWidth * 6) + whiteNoteHalfWidth - (blackNoteWidth / 2));
+        notesHalfWidths[static_cast<int>(Key::B)] =
+            (whiteNoteWidth * 6) + whiteNoteHalfWidth;
 
         this->bottomRangeOfNoteDetection = 5;
         this->upperRangeOfNoteDetection = 5;
     }
 
-    if (this->mode == TrackMode::TrackKeys)
-    {
+    if (this->mode == TrackMode::TrackKeys) {
         constexpr double percentageOfBlackKeys = 0.46511627907;
         constexpr double percentageOfWhiteKeys = 1 - percentageOfBlackKeys;
-        constexpr double percentageOfOneBlackKey = percentageOfBlackKeys / numOfBlackKeysInOctave;
-        constexpr double percentageOfOneWhiteKey = percentageOfWhiteKeys / numOfWhiteKeysInOctave;
+        constexpr double percentageOfOneBlackKey =
+            percentageOfBlackKeys / numOfBlackKeysInOctave;
+        constexpr double percentageOfOneWhiteKey =
+            percentageOfWhiteKeys / numOfWhiteKeysInOctave;
         double currentPosition = 10;
 
         notesHalfWidths[static_cast<int>(Key::C)] = currentPosition;
@@ -99,28 +116,25 @@ Keyboard::Keyboard(double octaveWidthInPixels, uint32_t firstOctaveAt, KeyboardN
 
 Keyboard::~Keyboard()
 {
-    for (auto &pointer : this->linesColored)
-    {
-        if (pointer)
-        {
+    for (auto &pointer : this->linesColored) {
+        if (pointer) {
             delete[] pointer;
             pointer = nullptr;
         }
     }
 }
 
-std::pair<bool, bool> Keyboard::isThisANoteONEvent(const std::vector<uint8_t> &possibleNote, bool expectBemol)
+std::pair<bool, bool>
+Keyboard::isThisANoteONEvent(const std::vector<uint8_t> &possibleNote, bool expectBemol)
 {
 
-    if (possibleNote.size() < 3)
-    {
+    if (possibleNote.size() < 3) {
         return {false, false};
     }
 
     std::vector<RGBColor> rgbColors;
 
-    for (uint64_t i = 0; i < possibleNote.size(); i += 3)
-    {
+    for (uint64_t i = 0; i < possibleNote.size(); i += 3) {
         auto red = possibleNote[i];
         auto green = possibleNote[i + 1];
         auto blue = possibleNote[i + 2];
@@ -130,20 +144,24 @@ std::pair<bool, bool> Keyboard::isThisANoteONEvent(const std::vector<uint8_t> &p
 
     RGBColor averageRGBColor{0, 0, 0};
 
-    if (!(RGBColor::areFirstTwoPixelsDifferentFromLastTwoPixels(rgbColors) && this->mode == TrackMode::FallingNotes))
-    {
+    if (!(RGBColor::areFirstTwoPixelsDifferentFromLastTwoPixels(rgbColors) &&
+          this->mode == TrackMode::FallingNotes)) {
         averageRGBColor = RGBColor::calculateAverage(rgbColors);
     }
 
     bool isLeftHandKeyPressed = false;
     bool isRightHandKeyPressed = false;
 
-    RGBColor leftHandColor = (expectBemol ? noteColors.getLeftHandBlackKeyColor() : noteColors.getLeftHandWhiteKeyColor());
-    RGBColor rightHandColor = (expectBemol ? noteColors.getRightHandBlackKeyColor() : noteColors.getRightHandWhiteKeyColor());
+    RGBColor leftHandColor = (expectBemol ? noteColors.getLeftHandBlackKeyColor()
+                                          : noteColors.getLeftHandWhiteKeyColor());
+    RGBColor rightHandColor = (expectBemol ? noteColors.getRightHandBlackKeyColor()
+                                           : noteColors.getRightHandWhiteKeyColor());
     bool beStrict = this->mode == TrackMode::FallingNotes ? true : false;
 
-    isLeftHandKeyPressed = leftHandColor.isColorCloseEnoughToReference(averageRGBColor, beStrict);
-    isRightHandKeyPressed = rightHandColor.isColorCloseEnoughToReference(averageRGBColor, beStrict);
+    isLeftHandKeyPressed =
+        leftHandColor.isColorCloseEnoughToReference(averageRGBColor, beStrict);
+    isRightHandKeyPressed =
+        rightHandColor.isColorCloseEnoughToReference(averageRGBColor, beStrict);
 
     return {isLeftHandKeyPressed, isRightHandKeyPressed};
 }
@@ -152,50 +170,54 @@ uint32_t Keyboard::numOfOctavesInFrame(uint32_t frameLength)
 {
 
     // not ceil!
-    uint32_t howManyOctaves = ((double)(frameLength - this->firstOctaveAt) / this->octaveWidthInPixels);
+    uint32_t howManyOctaves =
+        ((double)(frameLength - this->firstOctaveAt) / this->octaveWidthInPixels);
 
-    if ((howManyOctaves * octaveWidthInPixels) > frameLength)
-    {
+    if ((howManyOctaves * octaveWidthInPixels) > frameLength) {
         return howManyOctaves - 1;
     }
 
     return howManyOctaves;
 }
 
-std::vector<std::tuple<uint8_t, bool>> Keyboard::getNoteOnEvents(const std::vector<uint8_t> &pixelLine)
+std::vector<std::tuple<uint8_t, bool>>
+Keyboard::getNoteOnEvents(const std::vector<uint8_t> &pixelLine)
 {
     static int lineAnalyzed = 1;
     auto numOctaves = this->numOfOctavesInFrame(pixelLine.size() / 3);
     std::vector<std::tuple<uint8_t, bool>> noteOnEvents;
     std::vector<uint8_t> possibleNote;
-    possibleNote.reserve((this->bottomRangeOfNoteDetection + this->upperRangeOfNoteDetection) * 3);
+    possibleNote.reserve(
+        (this->bottomRangeOfNoteDetection + this->upperRangeOfNoteDetection) * 3);
     // uint32_t temp = 0;
 
     auto pointerToLine = new uint8_t[pixelLine.size()];
     this->linesColored.push_back(pointerToLine);
     std::memcpy(pointerToLine, pixelLine.data(), pixelLine.size());
 
-    for (uint32_t currentOctave = 0; currentOctave < numOctaves; currentOctave++)
-    {
+    for (uint32_t currentOctave = 0; currentOctave < numOctaves; currentOctave++) {
         int note = static_cast<int>(Key::C);
 
-        for (; note <= static_cast<int>(Key::B); note++)
-        {
+        for (; note <= static_cast<int>(Key::B); note++) {
             // temp = 24 + (12 * currentOctave) + note;
             //  relative bounds
-            uint32_t lowerBound = static_cast<uint32_t>(this->notesHalfWidths[note] - this->bottomRangeOfNoteDetection);
-            uint32_t upperBound = static_cast<uint32_t>(this->notesHalfWidths[note] + this->upperRangeOfNoteDetection);
+            uint32_t lowerBound = static_cast<uint32_t>(this->notesHalfWidths[note] -
+                                                        this->bottomRangeOfNoteDetection);
+            uint32_t upperBound = static_cast<uint32_t>(this->notesHalfWidths[note] +
+                                                        this->upperRangeOfNoteDetection);
 
             // absolute bounds in pixels
-            lowerBound += this->firstOctaveAt + (currentOctave * this->octaveWidthInPixels);
-            upperBound += this->firstOctaveAt + (currentOctave * this->octaveWidthInPixels);
+            lowerBound +=
+                this->firstOctaveAt + (currentOctave * this->octaveWidthInPixels);
+            upperBound +=
+                this->firstOctaveAt + (currentOctave * this->octaveWidthInPixels);
 
             // absolute bounds in bytes
             lowerBound *= 3;
             upperBound *= 3;
 
-            for (uint32_t lowerBoundStart = lowerBound; lowerBoundStart < upperBound; lowerBoundStart++)
-            {
+            for (uint32_t lowerBoundStart = lowerBound; lowerBoundStart < upperBound;
+                 lowerBoundStart++) {
                 possibleNote.push_back(pixelLine[lowerBoundStart]);
             }
 
@@ -207,18 +229,16 @@ std::vector<std::tuple<uint8_t, bool>> Keyboard::getNoteOnEvents(const std::vect
 
             // if we detected a left hand note press or a right hand note press
 
-            if (noteCheckResult.first || noteCheckResult.second)
-            {
+            if (noteCheckResult.first || noteCheckResult.second) {
                 uint32_t currentMidiNote = 24 + (12 * currentOctave) + note;
-                if (currentMidiNote == 24 || currentMidiNote == 26)
-                {
+                if (currentMidiNote == 24 || currentMidiNote == 26) {
                     continue;
                 }
 
                 uint32_t debugColor = noteCheckResult.first ? 100 : 200;
 
-                for (uint32_t lowerBoundStart = lowerBound; lowerBoundStart < upperBound; lowerBoundStart++)
-                {
+                for (uint32_t lowerBoundStart = lowerBound; lowerBoundStart < upperBound;
+                     lowerBoundStart++) {
                     pointerToLine[lowerBoundStart] = debugColor;
                 }
 
@@ -234,8 +254,7 @@ std::vector<std::tuple<uint8_t, bool>> Keyboard::getNoteOnEvents(const std::vect
 
 bool Keyboard::isBlackKey(Key note)
 {
-    switch (note)
-    {
+    switch (note) {
     case Key::Db:
     case Key::Eb:
     case Key::Gb:
@@ -247,10 +266,11 @@ bool Keyboard::isBlackKey(Key note)
     }
 }
 
-void Keyboard::generateMidiEvents(const std::vector<std::unique_ptr<RawFrame>> &collection, std::vector<MidiKeyboardEvent> &events)
+void Keyboard::generateMidiEvents(
+    const std::vector<std::unique_ptr<RawFrame>> &collection,
+    std::vector<MidiKeyboardEvent> &events)
 {
-    switch (this->mode)
-    {
+    switch (this->mode) {
     case TrackMode::TrackKeys:
         this->generateMidiEventsByTrackingKeys(collection, events);
         break;
@@ -260,11 +280,12 @@ void Keyboard::generateMidiEvents(const std::vector<std::unique_ptr<RawFrame>> &
     }
 }
 
-void Keyboard::generateMidiEventsByTrackingFallingNotes(const std::vector<std::unique_ptr<RawFrame>> &collection, std::vector<MidiKeyboardEvent> &events)
+void Keyboard::generateMidiEventsByTrackingFallingNotes(
+    const std::vector<std::unique_ptr<RawFrame>> &collection,
+    std::vector<MidiKeyboardEvent> &events)
 {
 
-    struct NoteOnEvent
-    {
+    struct NoteOnEvent {
         uint8_t key;
         uint8_t freshness;
         bool left; // was a left key pressed? no, then it was the right one
@@ -278,18 +299,16 @@ void Keyboard::generateMidiEventsByTrackingFallingNotes(const std::vector<std::u
 
     // runs on every frame
     int numLinesTotal = 0;
-    for (const auto &frame : collection)
-    {
+    for (const auto &frame : collection) {
         pixelLine.reserve(frame->getWidth() * 3);
 
         // runs on every line
-        for (int line = (frame->getHeight() - 1); line >= 0; line--)
-        {
+        for (int line = (frame->getHeight() - 1); line >= 0; line--) {
             numLinesTotal += 1;
             // runs for every byte in the line
-            for (uint32_t byte = 0; byte < frame->getWidth() * 3; byte++)
-            {
-                auto colorByte = (frame->getData() + (frame->getWidth() * 3 * line) + byte);
+            for (uint32_t byte = 0; byte < frame->getWidth() * 3; byte++) {
+                auto colorByte =
+                    (frame->getData() + (frame->getWidth() * 3 * line) + byte);
 
                 pixelLine.push_back(*colorByte);
             }
@@ -297,33 +316,26 @@ void Keyboard::generateMidiEventsByTrackingFallingNotes(const std::vector<std::u
             auto onEvents = this->getNoteOnEvents(pixelLine);
             pixelLine.clear();
 
-            for (const auto &onEvent : onEvents)
-            {
+            for (const auto &onEvent : onEvents) {
 
                 auto [key, leftEvent] = onEvent;
 
                 bool foundOnPreviousEventList = false;
-                for (uint64_t ev = 0; ev < previousEvents.size(); ev++)
-                {
-                    if (std::get<0>(previousEvents[ev]) == key)
-                    {
+                for (uint64_t ev = 0; ev < previousEvents.size(); ev++) {
+                    if (std::get<0>(previousEvents[ev]) == key) {
                         foundOnPreviousEventList = true;
                         break;
                     }
                 }
 
-                if (foundOnPreviousEventList)
-                {
+                if (foundOnPreviousEventList) {
                     auto it = myMap.find(key);
 
                     // if I find find the key in my status vector
-                    if (it != myMap.end())
-                    {
+                    if (it != myMap.end()) {
                         if (it->second.freshness == 1)
                             it->second.freshness += 1;
-                    }
-                    else
-                    {
+                    } else {
                         NoteOnEvent newkey{key, 32, leftEvent};
                         myMap.insert({key, newkey});
 
@@ -333,21 +345,19 @@ void Keyboard::generateMidiEventsByTrackingFallingNotes(const std::vector<std::u
                 }
             }
 
-            for (auto &mapElement : myMap)
-            {
+            for (auto &mapElement : myMap) {
                 myMap[mapElement.first].freshness -= 1;
 
-                if (mapElement.second.freshness == 0)
-                {
-                    MidiKeyboardEvent mEvent{absoluteTick, mapElement.second.key, 0, mapElement.second.left};
+                if (mapElement.second.freshness == 0) {
+                    MidiKeyboardEvent mEvent{absoluteTick, mapElement.second.key, 0,
+                                             mapElement.second.left};
 
                     events.push_back(mEvent);
                     notesToRemoveFromMap.push_back(mapElement.first);
                 }
             }
 
-            for (auto key : notesToRemoveFromMap)
-            {
+            for (auto key : notesToRemoveFromMap) {
                 myMap.erase(key);
             }
 
@@ -362,10 +372,11 @@ void Keyboard::generateMidiEventsByTrackingFallingNotes(const std::vector<std::u
     this->printColoredImage();
 }
 
-void Keyboard::generateMidiEventsByTrackingKeys(const std::vector<std::unique_ptr<RawFrame>> &collection, std::vector<MidiKeyboardEvent> &events)
+void Keyboard::generateMidiEventsByTrackingKeys(
+    const std::vector<std::unique_ptr<RawFrame>> &collection,
+    std::vector<MidiKeyboardEvent> &events)
 {
-    struct NoteOnEvent
-    {
+    struct NoteOnEvent {
         uint8_t key;
         bool left; // was a left key pressed? no, then it was the right one
     };
@@ -377,18 +388,16 @@ void Keyboard::generateMidiEventsByTrackingKeys(const std::vector<std::unique_pt
 
     // runs on every frame
     int numLinesTotal = 0;
-    for (const auto &frame : collection)
-    {
+    for (const auto &frame : collection) {
         pixelLine.reserve(frame->getWidth() * 3);
 
         // runs on every line
-        for (int line = (frame->getHeight() - 1); line >= 0; line--)
-        {
+        for (int line = (frame->getHeight() - 1); line >= 0; line--) {
             numLinesTotal += 1;
             // runs for every byte in the line
-            for (uint32_t byte = 0; byte < frame->getWidth() * 3; byte++)
-            {
-                auto colorByte = (frame->getData() + (frame->getWidth() * 3 * line) + byte);
+            for (uint32_t byte = 0; byte < frame->getWidth() * 3; byte++) {
+                auto colorByte =
+                    (frame->getData() + (frame->getWidth() * 3 * line) + byte);
 
                 pixelLine.push_back(*colorByte);
             }
@@ -396,43 +405,35 @@ void Keyboard::generateMidiEventsByTrackingKeys(const std::vector<std::unique_pt
             auto onEvents = this->getNoteOnEvents(pixelLine);
             pixelLine.clear();
 
-            for (const auto &onEvent : onEvents)
-            {
+            for (const auto &onEvent : onEvents) {
 
                 auto [key, leftEvent] = onEvent;
 
                 bool foundOnPreviousEventList = false;
-                for (uint64_t ev = 0; ev < previousEvents.size(); ev++)
-                {
-                    if (std::get<0>(previousEvents[ev]) == key)
-                    {
+                for (uint64_t ev = 0; ev < previousEvents.size(); ev++) {
+                    if (std::get<0>(previousEvents[ev]) == key) {
                         foundOnPreviousEventList = true;
                         break;
                     }
                 }
 
-                if (!foundOnPreviousEventList)
-                {
+                if (!foundOnPreviousEventList) {
                     events.emplace_back(absoluteTick, key, 50, leftEvent);
                 }
             }
 
-            for (const auto &onEvent : previousEvents)
-            {
+            for (const auto &onEvent : previousEvents) {
                 auto [key, leftEvent] = onEvent;
 
                 bool foundOnLatestEventList = false;
-                for (uint64_t ev = 0; ev < onEvents.size(); ev++)
-                {
-                    if (std::get<0>(onEvents[ev]) == key)
-                    {
+                for (uint64_t ev = 0; ev < onEvents.size(); ev++) {
+                    if (std::get<0>(onEvents[ev]) == key) {
                         foundOnLatestEventList = true;
                         break;
                     }
                 }
 
-                if (!foundOnLatestEventList)
-                {
+                if (!foundOnLatestEventList) {
                     events.emplace_back(absoluteTick, key, 0, leftEvent);
                 }
             }
@@ -450,12 +451,9 @@ void Keyboard::generateMidiEventsByTrackingKeys(const std::vector<std::unique_pt
 void Keyboard::printColoredImage()
 {
 
-    if (this->linesColored.size() == 0)
-    {
+    if (this->linesColored.size() == 0) {
         return; // nothing to do
-    }
-    else
-    {
+    } else {
         std::cout << linesColored.size() << " size of lines colored" << std::endl;
     }
 
@@ -467,13 +465,14 @@ void Keyboard::printColoredImage()
     std::ofstream outputFrameFile(outFileName, std::ofstream::binary);
 
     outputFrameFile << "P6\n"
-                    << RawFrame::width << " " << height * this->linesColored.size() << "\n"
+                    << RawFrame::width << " " << height * this->linesColored.size()
+                    << "\n"
                     << 255 << "\n";
 
-    for (auto it = this->linesColored.rbegin(); it != this->linesColored.rend(); it++)
-    {
+    for (auto it = this->linesColored.rbegin(); it != this->linesColored.rend(); it++) {
         const auto &rawFrame = *it;
-        outputFrameFile.write(reinterpret_cast<char *>(rawFrame), RawFrame::width * height * 3);
+        outputFrameFile.write(reinterpret_cast<char *>(rawFrame),
+                              RawFrame::width * height * 3);
     }
 
     outputFrameFile.flush();
@@ -487,27 +486,22 @@ void Keyboard::markShortNotes(std::vector<MidiKeyboardEvent> &events)
 
     uint32_t index = 0;
     // for (auto &event : events)
-    for (uint32_t i = 0; i < events.size(); i++)
-    {
+    for (uint32_t i = 0; i < events.size(); i++) {
         auto event = events[i];
         auto it = temp.find(event.key);
 
-        if (it == temp.end())
-        {
+        if (it == temp.end()) {
             temp[event.key] = {event.tick, index};
-        }
-        else
-        {
-            if (event.velocity > 0)
-            {
+        } else {
+            if (event.velocity > 0) {
                 std::cout << "Ok, this should have not happened" << std::endl;
                 break;
             }
 
             int tempTick = std::get<0>(it->second);
             int tempIndex = std::get<1>(it->second);
-            if (std::abs(static_cast<int32_t>(tempTick) - static_cast<int32_t>(event.tick)) < 2)
-            {
+            if (std::abs(static_cast<int32_t>(tempTick) -
+                         static_cast<int32_t>(event.tick)) < 2) {
                 // 255 means to me, ignore these events, both on and off
                 events[tempIndex].key = 255;
                 event.key = 255;
@@ -520,4 +514,8 @@ void Keyboard::markShortNotes(std::vector<MidiKeyboardEvent> &events)
     }
 }
 
-MidiKeyboardEvent::MidiKeyboardEvent(uint32_t tick, uint8_t key, uint8_t velocity, bool left) : tick(tick), key(key), velocity(velocity), left(left) {}
+MidiKeyboardEvent::MidiKeyboardEvent(uint32_t tick, uint8_t key, uint8_t velocity,
+                                     bool left)
+    : tick(tick), key(key), velocity(velocity), left(left)
+{
+}

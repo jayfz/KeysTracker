@@ -1,12 +1,13 @@
-#include <vector>
+#include "RGBColor.h"
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
-#include <algorithm>
 #include <sstream>
-#include "RGBColor.h"
+#include <vector>
 
-RGBColor::RGBColor(uint8_t red, uint8_t green, uint8_t blue) : redChannel(red), greenChannel(green), blueChannel(blue)
+RGBColor::RGBColor(uint8_t red, uint8_t green, uint8_t blue)
+    : redChannel(red), greenChannel(green), blueChannel(blue)
 {
 }
 
@@ -18,8 +19,7 @@ RGBColor RGBColor::calculateAverage(const std::vector<RGBColor> &colors)
     double greenAccumualtor = 0;
     double blueAccumualtor = 0;
 
-    for (auto color : colors)
-    {
+    for (auto color : colors) {
         redAccumualtor += color.redChannel;
         greenAccumualtor += color.greenChannel;
         blueAccumualtor += color.blueChannel;
@@ -29,16 +29,15 @@ RGBColor RGBColor::calculateAverage(const std::vector<RGBColor> &colors)
     greenAccumualtor = std::round(greenAccumualtor / colors.size());
     blueAccumualtor = std::round(blueAccumualtor / colors.size());
 
-    return {static_cast<uint8_t>(redAccumualtor),
-            static_cast<uint8_t>(greenAccumualtor),
+    return {static_cast<uint8_t>(redAccumualtor), static_cast<uint8_t>(greenAccumualtor),
             static_cast<uint8_t>(blueAccumualtor)};
 }
-bool RGBColor::areFirstTwoPixelsDifferentFromLastTwoPixels(const std::vector<RGBColor> &colors)
+bool RGBColor::areFirstTwoPixelsDifferentFromLastTwoPixels(
+    const std::vector<RGBColor> &colors)
 {
 
     // do some special checks for earlier return;
-    if (colors.size() >= 4)
-    {
+    if (colors.size() >= 4) {
         RGBColor color0 = colors[0];
         RGBColor color1 = colors[1];
         RGBColor colorLast = colors[colors.size() - 1];
@@ -60,10 +59,11 @@ bool RGBColor::areFirstTwoPixelsDifferentFromLastTwoPixels(const std::vector<RGB
         if (std::abs(averageFirst.blueChannel - averageLast.blueChannel) >= 40) // 24
             blueFromExtremesAreQuiteDifferent = true;
 
-        bool startAndEndAreDifferentColors = redFromExtremesAreQuiteDifferent || greenFromExtremesAreQuiteDifferent || blueFromExtremesAreQuiteDifferent;
+        bool startAndEndAreDifferentColors = redFromExtremesAreQuiteDifferent ||
+                                             greenFromExtremesAreQuiteDifferent ||
+                                             blueFromExtremesAreQuiteDifferent;
 
-        if (startAndEndAreDifferentColors)
-        {
+        if (startAndEndAreDifferentColors) {
             return true;
         }
     }
@@ -73,8 +73,7 @@ bool RGBColor::areFirstTwoPixelsDifferentFromLastTwoPixels(const std::vector<RGB
 RGBColor RGBColor::fromString(std::string color)
 {
 
-    if (color.size() != 7 || color[0] != 'h')
-    {
+    if (color.size() != 7 || color[0] != 'h') {
         throw std::invalid_argument("Invalid color format: " + color);
     }
 
@@ -82,18 +81,32 @@ RGBColor RGBColor::fromString(std::string color)
     std::string green = color.substr(3, 2);
     std::string blue = color.substr(5, 2);
 
-    return {RGBColor::stringHexToInt(red),
-            RGBColor::stringHexToInt(green),
+    return {RGBColor::stringHexToInt(red), RGBColor::stringHexToInt(green),
             RGBColor::stringHexToInt(blue)};
 }
-bool RGBColor::isColorCloseEnoughToReference(RGBColor other, bool beStrict) const
+
+std::vector<RGBColor> fromBytes(std::vector<uint8_t> colorBytes)
+{
+
+    std::vector<RGBColor> result;
+    result.reserve(colorBytes.size() / 3);
+
+    for (uint64_t i = 0; i < colorBytes.size(); i += 3) {
+        auto red = colorBytes[i];
+        auto green = colorBytes[i + 1];
+        auto blue = colorBytes[i + 2];
+
+        result.push_back({red, green, blue});
+    }
+
+    return result;
+}
+bool RGBColor::isColorCloseEnoughToReference(RGBColor other, uint8_t fudgeFactor) const
 {
 
     bool redIsSimilar = false;
     bool greenIsSimilar = false;
     bool blueIsSimilar = false;
-
-    uint8_t fudgeFactor = beStrict ? 24 : 36;
 
     if (std::abs(this->redChannel - other.redChannel) < fudgeFactor)
         redIsSimilar = true;
@@ -110,7 +123,8 @@ uint8_t RGBColor::stringHexToInt(const std::string &colorChannel)
     std::stringstream stream;
     stream << std::hex << colorChannel;
 
-    uint16_t result; // apparently can't use a uint8_t to read since it's treated as a character...
+    uint16_t result; // apparently can't use a uint8_t to read since it's treated as a
+                     // character...
     stream >> result;
 
     return static_cast<uint8_t>(result);

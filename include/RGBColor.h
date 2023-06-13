@@ -2,20 +2,22 @@
 #define RGB_COLOR
 
 #include <cstdint>
-#include <vector>
 #include <string>
+#include <vector>
 
 class RGBColor
 {
-public:
+  public:
     RGBColor(uint8_t red, uint8_t green, uint8_t blue);
     static RGBColor calculateAverage(const std::vector<RGBColor> &colors);
-    static bool areFirstTwoPixelsDifferentFromLastTwoPixels(const std::vector<RGBColor> &colors);
+    static bool
+    areFirstTwoPixelsDifferentFromLastTwoPixels(const std::vector<RGBColor> &colors);
     static RGBColor fromString(std::string color);
+    static std::vector<RGBColor> fromBytes(std::vector<uint8_t> colorBytes);
 
-    bool isColorCloseEnoughToReference(RGBColor other, bool beStrict) const;
+    bool isColorCloseEnoughToReference(RGBColor other, uint8_t fudgeFactor) const;
 
-private:
+  private:
     uint8_t redChannel;
     uint8_t greenChannel;
     uint8_t blueChannel;

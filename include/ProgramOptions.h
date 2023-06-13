@@ -2,11 +2,10 @@
 #define PROGRAM_OPTIONS_H
 
 #include "ArgumentParser.h"
-#include <vector>
 #include <string>
+#include <vector>
 
-struct ProgramOptions
-{
+struct ProgramOptions {
 
     ProgramOptions(ArgumentParser parser);
     bool areValid() const;
@@ -22,12 +21,12 @@ struct ProgramOptions
     int firstOctaveAt;
     double octavesLength;
     int numOfOctaves;
-    int rawFrameHeight;
+    int rawFrameLinesToExtract;
     int rawFrameWidth;
     int rawFrameCopyFromLine;
     int numberOfFramesToSkip;
 
-private:
+  private:
     static std::string getErrorForMissedRequired(std::string required);
     mutable std::vector<std::string> errors;
 };

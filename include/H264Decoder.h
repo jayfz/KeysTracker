@@ -1,45 +1,41 @@
 #ifndef H264_DECODER_H
 #define H264_DECODER_H
 
+// #include "PixelLine.h"
+// #include "RawFrame.h"
+#include "FrameProcessor.h"
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
-#include "RawFrame.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+extern "C" {
 #include <libavcodec/avcodec.h>
-#include <libavutil/imgutils.h> /* av_image_alloc*/
 #include <libavutil/avutil.h>
+#include <libavutil/imgutils.h> /* av_image_alloc*/
 #include <libswscale/swscale.h> /* swsContext */
-
-#ifdef __cplusplus
 }
-#endif
 
 class H264Decoder
 {
 
-public:
-    H264Decoder(const std::string &fileName, uint32_t startingFrom = 1, uint32_t numFramesToDecode = UINT32_MAX);
+  public:
+    H264Decoder(FrameProcessor *processor, const std::string &fileName,
+                uint32_t startingFrom = 0, uint32_t numFramesToDecode = UINT32_MAX);
 
     ~H264Decoder();
     H264Decoder(const H264Decoder &other) = delete;
     H264Decoder &operator=(const H264Decoder &other) = delete;
     bool wasInitializedCorrectly();
     void decode();
-    const std::vector<std::unique_ptr<RawFrame>> &getFrameCollection() const;
 
-private:
+  private:
     static const uint16_t INBUF_SIZE = 4096;
     std::string fileName;
     uint32_t startingFrom;
     uint32_t numFramesToDecode;
     uint32_t numFramesDecodedSofar = 0;
     int openCodecresult = -1;
-    std::vector<std::unique_ptr<RawFrame>> frameCollection;
+    FrameProcessor *processor;
 
     AVCodec *codec = nullptr;
     AVCodecParserContext *parser = nullptr;
