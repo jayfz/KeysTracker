@@ -1,8 +1,8 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "ColorFrameProcessor.h"
 #include "FallingNotesTracker.h"
+#include "FrameProcessor.h"
 #include "H264Decoder.h"
 #include "KeyboardInfo.h"
 #include "KeyboardNotesColors.h"
@@ -24,7 +24,6 @@ class Application
     void run();
 
   private:
-    FrameProcessor *getFrameProcessor();
     Tracker *getTracker(std::string trackerOption);
 
     FrameProcessor *frameProcessor;

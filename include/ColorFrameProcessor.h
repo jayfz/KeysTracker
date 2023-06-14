@@ -6,8 +6,10 @@
 class ColorFrameProcessor : public FrameProcessor
 {
   public:
+    virtual ~ColorFrameProcessor() = default;
     ColorFrameProcessor(uint32_t numLinesToExtract, uint32_t startLine);
-    void doProcessFrame(uint8_t *decodedFrame, uint32_t width, uint32_t height) override;
+    virtual void doProcessFrame(uint8_t *decodedFrame, uint32_t width,
+                                uint32_t height) override;
 
   private:
     uint32_t numLinesToExtract;

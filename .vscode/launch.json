@@ -5,6 +5,12 @@
       "type": "cppdbg",
       "request": "launch",
       // "program": "${fileDirname}/${fileBasenameNoExtension}",
+      // "program": "/usr/bin/gdb",
+      // "args": [
+      //   "-ex",
+      //   "run",
+      //   "--args",
+      //   "${workspaceFolder}/build/src/KeysTracker",
       "program": "${workspaceFolder}/build/src/KeysTracker",
       "args": [
         "--input-video-filename=./barfus.h264",
@@ -40,7 +46,9 @@
         }
       ],
       // "preLaunchTask": "make",
+
       "miDebuggerPath": "/usr/bin/gdb",
+
       "miDebuggerArgs": "-q -ex quit; wait() { fg >/dev/null; }; /bin/gdb -q --interpreter=mi"
     },
     {

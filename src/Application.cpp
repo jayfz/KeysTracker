@@ -1,11 +1,9 @@
 #include "Application.h"
+#include "ColorFrameProcessor.h"
 
 Application::Application(ProgramOptions options)
-    :
-
-      frameProcessor(new ColorFrameProcessor(options.rawFrameLinesToExtract,
+    : frameProcessor(new ColorFrameProcessor(options.rawFrameLinesToExtract,
                                              options.rawFrameCopyFromLine)),
-
       decoder(frameProcessor, options.videoStreamFileName, options.numberOfFramesToSkip),
 
       midiFile(options.outFileName),
@@ -14,10 +12,9 @@ Application::Application(ProgramOptions options)
                  options.rightHandWhiteKeyColor, options.rightHandBlackKeyColor),
 
       keyboardInfo(options.octavesLength, options.numOfOctaves, options.firstOctaveAt,
-                   noteColors)
+                   noteColors),
+      tracker(this->getTracker(options.trackMode))
 {
-
-    this->tracker = getTracker(options.trackMode);
 }
 Application::~Application()
 {
@@ -28,24 +25,23 @@ Application::~Application()
 void Application::run()
 {
 
-    if (decoder.wasInitializedCorrectly()) {
-
-        decoder.decode();
-
-        std::vector<MidiKeysEvent> events =
-            tracker->generateMidiEvents(this->frameProcessor->getLines());
-
-        for (const auto &event : events) {
-            if (event.isLeftEvent)
-                this->midiFile.addLeftHandEvent(event.tick, event.note + 36,
-                                                event.velocity);
-            else
-                this->midiFile.addRightHandEvent(event.tick, event.note + 36,
-                                                 event.velocity);
-        }
-
-        this->midiFile.save();
+    if (!decoder.wasInitializedCorrectly()) {
+        return;
     }
+
+    decoder.decode();
+
+    std::vector<MidiKeysEvent> events =
+        tracker->generateMidiEvents(this->frameProcessor->getLines());
+
+    for (const auto &event : events) {
+        if (event.isLeftEvent)
+            this->midiFile.addLeftHandEvent(event.tick, event.note + 24, event.velocity);
+        else
+            this->midiFile.addRightHandEvent(event.tick, event.note + 24, event.velocity);
+    }
+
+    this->midiFile.save();
 }
 
 Tracker *Application::getTracker(std::string trackerOption)

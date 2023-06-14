@@ -1,4 +1,5 @@
 #include "H264Decoder.h"
+#include "ColorFrameProcessor.h"
 #include "Keyboard.h"
 #include "ManagedMidiFile.h"
 #include <fstream>
@@ -40,8 +41,8 @@ H264Decoder::~H264Decoder()
         if (this->packet) {
             av_packet_free(&this->packet);
             this->packet = nullptr;
-            processFrame(); // at the end we need to "flush the decoder", that's done
-                            // calling processFrame with this->packet as nullptr
+            // processFrame(); pending flushing decoder, but I am not interested in seeing
+            // the end anyways
         }
 
     if (this->parser) {
@@ -69,12 +70,12 @@ H264Decoder::~H264Decoder()
 
 bool H264Decoder::wasInitializedCorrectly()
 {
-    bool correct = true;
+    bool initializedCorrectly = true;
 
     if (!codec || !parser || !codecContext || !frame || !packet || openCodecresult < 0)
-        correct = false;
+        initializedCorrectly = false;
 
-    return correct;
+    return initializedCorrectly;
 }
 
 void H264Decoder::decode()
@@ -84,7 +85,7 @@ void H264Decoder::decode()
     bool shouldStopDecoding = false;
 
     if (!inputFile.is_open()) {
-        return; // error
+        return;
     }
 
     while (!inputFile.eof()) {
@@ -115,12 +116,11 @@ void H264Decoder::decode()
 
 bool H264Decoder::processFrame()
 {
-
     int sendPacketResult;
 
     sendPacketResult = avcodec_send_packet(this->codecContext, this->packet);
     if (sendPacketResult < 0) {
-        return false; // error
+        return false;
     }
 
     while (sendPacketResult >= 0) {
@@ -128,25 +128,22 @@ bool H264Decoder::processFrame()
         if (sendPacketResult == AVERROR(EAGAIN) || sendPacketResult == AVERROR_EOF)
             return false;
 
-        if (sendPacketResult < 0) {
-            return true; // error fprintf(stderr, "Error during decoding\n"); exit(1);
-        }
-
-        SwsContext *swsctx = this->getSWSContext();
-
-        if (!swsctx)
+        if (sendPacketResult < 0)
             return true;
+
+        if (this->getSWSContext() == nullptr) {
+            return true;
+        }
 
         uint8_t *dst_data[4] = {nullptr};
         int dst_linesize[4] = {0};
 
         av_image_alloc(dst_data, dst_linesize, this->frame->width, this->frame->height,
                        AV_PIX_FMT_RGB24, 1);
-        sws_scale(swsctx, frame->data, frame->linesize, 0, this->frame->height, dst_data,
-                  dst_linesize);
 
-        // coded_picture_number -> bit order
-        // display_picture_number -> display order
+        sws_scale(this->swsContext, frame->data, frame->linesize, 0, this->frame->height,
+                  dst_data, dst_linesize);
+
         if ((static_cast<uint32_t>(this->frame->coded_picture_number) >=
              this->startingFrom) &&
             this->numFramesDecodedSofar < this->numFramesToDecode) {
@@ -184,11 +181,6 @@ SwsContext *H264Decoder::getSWSContext()
         sws_getContext(this->frame->width, this->frame->height, sourcePixelFormat,
                        this->frame->width, this->frame->height, destinationPixelFormat,
                        SWS_BILINEAR, nullptr, nullptr, nullptr);
-
-    if (!this->swsContext) {
-        // std::cerr << "Could not initialize the conversion context." << std::endl;
-        return nullptr;
-    }
 
     return this->swsContext;
 }

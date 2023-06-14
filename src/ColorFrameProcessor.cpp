@@ -1,4 +1,6 @@
 #include "ColorFrameProcessor.h"
+#include <iostream>
+#include <string>
 
 ColorFrameProcessor::ColorFrameProcessor(uint32_t numLinesToExtract, uint32_t startLine)
     : numLinesToExtract(numLinesToExtract), startLine(startLine)
@@ -9,9 +11,8 @@ ColorFrameProcessor::ColorFrameProcessor(uint32_t numLinesToExtract, uint32_t st
 void ColorFrameProcessor::doProcessFrame(uint8_t *decodedFrame, uint32_t width,
                                          uint32_t height)
 {
-
     if (this->startLine + numLinesToExtract > height) {
-        return; // can not read safely
+        return;
     }
 
     for (uint32_t line = this->numLinesToExtract; line > 0; line -= 1) {
