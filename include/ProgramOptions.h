@@ -22,7 +22,6 @@ struct ProgramOptions {
     double octavesLength;
     int numOfOctaves;
     int rawFrameLinesToExtract;
-    int rawFrameWidth;
     int rawFrameCopyFromLine;
     int numberOfFramesToSkip;
 

@@ -6,7 +6,7 @@ Application::Application(ProgramOptions options)
       frameProcessor(new ColorFrameProcessor(options.rawFrameLinesToExtract,
                                              options.rawFrameCopyFromLine)),
 
-      decoder(frameProcessor, options.videoStreamFileName, 5),
+      decoder(frameProcessor, options.videoStreamFileName, options.numberOfFramesToSkip),
 
       midiFile(options.outFileName),
 
@@ -15,7 +15,6 @@ Application::Application(ProgramOptions options)
 
       keyboardInfo(options.octavesLength, options.numOfOctaves, options.firstOctaveAt,
                    noteColors)
-
 {
 
     this->tracker = getTracker(options.trackMode);
@@ -38,10 +37,10 @@ void Application::run()
 
         for (const auto &event : events) {
             if (event.isLeftEvent)
-                this->midiFile.addLeftHandEvent(event.tick, event.note + 0,
+                this->midiFile.addLeftHandEvent(event.tick, event.note + 36,
                                                 event.velocity);
             else
-                this->midiFile.addRightHandEvent(event.tick, event.note + 0,
+                this->midiFile.addRightHandEvent(event.tick, event.note + 36,
                                                  event.velocity);
         }
 
@@ -53,15 +52,15 @@ Tracker *Application::getTracker(std::string trackerOption)
 {
 
     if (trackerOption == "falling-notes") {
-        this->trackingPointStrategy = new SpacedNotesStrategy();
+        this->trackingPointStrategy = new OverlappingNotesStrategy();
         return new FallingNotesTracker(this->keyboardInfo, this->trackingPointStrategy);
     }
 
     if (trackerOption == "keys") {
-        this->trackingPointStrategy = new OverlappingNotesStrategy();
+        this->trackingPointStrategy = new SpacedNotesStrategy();
         return new KeyboardTracker(this->keyboardInfo, this->trackingPointStrategy);
     }
 
-    this->trackingPointStrategy = new SpacedNotesStrategy();
+    this->trackingPointStrategy = new OverlappingNotesStrategy();
     return new FallingNotesTracker(this->keyboardInfo, this->trackingPointStrategy);
 }

@@ -20,7 +20,6 @@ ProgramOptions::ProgramOptions(ArgumentParser parser)
     this->numOfOctaves = parser.getOptionOrDefault<int>("number-of-octaves", -1);
     this->rawFrameLinesToExtract =
         parser.getOptionOrDefault<int>("raw-frame-lines-to-extract", -1);
-    this->rawFrameWidth = parser.getOptionOrDefault<int>("raw-frame-width", -1);
     this->rawFrameCopyFromLine =
         parser.getOptionOrDefault<int>("raw-frame-copy-from-line", -1);
 
@@ -73,10 +72,6 @@ bool ProgramOptions::areValid() const
     if (this->rawFrameLinesToExtract == -1) {
         errors.push_back(
             ProgramOptions::getErrorForMissedRequired("raw-frame-lines-to-extract"));
-    }
-
-    if (this->rawFrameWidth == -1) {
-        errors.push_back(ProgramOptions::getErrorForMissedRequired("raw-frame-width"));
     }
 
     if (this->rawFrameCopyFromLine == -1) {

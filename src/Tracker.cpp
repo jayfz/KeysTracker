@@ -20,7 +20,6 @@ Tracker::getNoteOnEvents(const std::vector<uint8_t> &pixelLine)
     for (uint8_t currentMidiNote = 0;
          currentMidiNote < this->keyboardInfo.numberOfTotalNotesInKeyboard;
          currentMidiNote++) {
-        int note = static_cast<int>(Key::C);
 
         uint32_t lowerBound = (uint32_t)(this->notesTrackingPoints[currentMidiNote] -
                                          this->bottomRangeOfNoteDetection);
@@ -36,7 +35,7 @@ Tracker::getNoteOnEvents(const std::vector<uint8_t> &pixelLine)
             possibleNote.push_back(pixelLine[lowerBoundStart]);
         }
 
-        bool isBemol = KeyboardInfo::isBlackKey(note);
+        bool isBemol = KeyboardInfo::isBlackKey(currentMidiNote);
         auto noteCheckResult = this->isThisANoteONEvent(possibleNote, isBemol);
         possibleNote.clear();
 

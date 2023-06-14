@@ -7,7 +7,7 @@
 class TrackingPointStrategy
 {
   public:
-    virtual ~TrackingPointStrategy();
+    virtual ~TrackingPointStrategy() = default;
     virtual std::array<double, 128> calculatePoints(KeyboardInfo info) = 0;
 };
 #endif

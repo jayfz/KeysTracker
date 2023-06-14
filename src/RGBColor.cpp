@@ -85,7 +85,7 @@ RGBColor RGBColor::fromString(std::string color)
             RGBColor::stringHexToInt(blue)};
 }
 
-std::vector<RGBColor> fromBytes(std::vector<uint8_t> colorBytes)
+std::vector<RGBColor> RGBColor::fromBytes(std::vector<uint8_t> colorBytes)
 {
 
     std::vector<RGBColor> result;

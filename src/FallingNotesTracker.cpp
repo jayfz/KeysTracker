@@ -9,12 +9,6 @@ FallingNotesTracker::FallingNotesTracker(KeyboardInfo info,
 
     this->bottomRangeOfNoteDetection = 5;
     this->upperRangeOfNoteDetection = 5;
-
-    // TODO: fill up this->noteTrackingPoints. Remember to include
-    // absolute bounds in pixels
-    // lowerBound += this->keyboardInfo.firstOctaveAt;
-    // upperBound += this->keyboardInfo.firstOctaveAt;
-    // should I also do lowerBound *= 3;?
 };
 
 std::vector<MidiKeysEvent>
@@ -99,6 +93,7 @@ FallingNotesTracker::generateMidiEvents(const std::vector<PixelLine> &collection
     }
 
     markShortNotes(events);
+    this->printColoredImage();
     return events;
 }
 

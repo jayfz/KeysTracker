@@ -2,16 +2,27 @@
 add_executable(KeysTracker)
 
 ##main executable sources
+
+#removed:
+#RawFrame.cpp
+#Keyboard.cpp
 target_sources(KeysTracker PUBLIC
+    Application.cpp
+    ArgumentParser.cpp
+    ColorFrameProcessor.cpp
+    FallingNotesTracker.cpp
     H264Decoder.cpp
-    Keyboard.cpp
+    KeyboardInfo.cpp
     KeyboardNotesColors.cpp
+    KeyboardTracker.cpp
     main.cpp
     ManagedMidiFile.cpp
-    RawFrame.cpp
-    RGBColor.cpp
-    ArgumentParser.cpp
+    OverlappingNotesStrategy.cpp
+    PixelLine.cpp
     ProgramOptions.cpp
+    RGBColor.cpp
+    SpacedNotesStrategy.cpp
+    Tracker.cpp
 )
 
 ##main executable include directory  (headers)

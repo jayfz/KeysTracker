@@ -30,12 +30,12 @@ class H264Decoder
 
   private:
     static const uint16_t INBUF_SIZE = 4096;
+    FrameProcessor *processor;
     std::string fileName;
     uint32_t startingFrom;
     uint32_t numFramesToDecode;
     uint32_t numFramesDecodedSofar = 0;
     int openCodecresult = -1;
-    FrameProcessor *processor;
 
     AVCodec *codec = nullptr;
     AVCodecParserContext *parser = nullptr;

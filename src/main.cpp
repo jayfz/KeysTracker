@@ -2,9 +2,10 @@
 #include "ArgumentParser.h"
 #include "ProgramOptions.h"
 
-// TODO: add files to CMAKELISTS
+// DONE: add files to CMAKELISTS
 // TODO: delete Keyboard.cpp, and Keyboard.h and any old code;
 // FIX parameters in launch.json
+// TODO: get transposing working
 
 int main(int argc, char *argv[])
 {
