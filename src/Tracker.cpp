@@ -9,6 +9,7 @@ Tracker::Tracker(KeyboardInfo info, TrackingPointStrategy *strategy) : keyboardI
 void Tracker::printColoredImage()
 {
     PixelLine::saveBigFormatFrame(this->linesColored, "debug");
+    PixelLine::saveBigFormatFrame(this->linesTracked, "tracked");
 }
 
 std::vector<std::tuple<uint8_t, bool>>
@@ -17,6 +18,7 @@ Tracker::getNoteOnEvents(const std::vector<uint8_t> &pixelLine)
     static uint32_t linesProcessed = 0;
     std::vector<std::tuple<uint8_t, bool>> noteOnEvents;
     std::vector<uint8_t> possibleNote;
+
     possibleNote.reserve(
         (this->bottomRangeOfNoteDetection + this->upperRangeOfNoteDetection) * 3);
 
@@ -44,16 +46,18 @@ Tracker::getNoteOnEvents(const std::vector<uint8_t> &pixelLine)
 
         // if we detected a left hand note press or a right hand note press
 
-        if (noteCheckResult.first || noteCheckResult.second) {
+        uint32_t debugColor = noteCheckResult.first ? 100 : 200;
 
-            uint32_t debugColor = noteCheckResult.first ? 100 : 200;
+        for (uint32_t lowerBoundStart = lowerBound; lowerBoundStart < upperBound;
+             lowerBoundStart++) {
+            this->linesTracked[linesProcessed].at(lowerBoundStart) = debugColor;
 
-            for (uint32_t lowerBoundStart = lowerBound; lowerBoundStart < upperBound;
-                 lowerBoundStart++) {
+            if (noteCheckResult.first || noteCheckResult.second) {
+
                 this->linesColored[linesProcessed].at(lowerBoundStart) = debugColor;
-            }
 
-            noteOnEvents.push_back({currentMidiNote, noteCheckResult.first});
+                noteOnEvents.push_back({currentMidiNote, noteCheckResult.first});
+            }
         }
     }
 

@@ -5,6 +5,7 @@ void RawPPMImageProcessor::doProcessFrame(uint8_t *decodedFrame, uint32_t width,
                                           uint32_t height)
 {
 
+    this->lines.reserve(height);
     uint32_t bytesToReadPerLine = width * 3;
     uint32_t bytesReadSoFar = 0;
 

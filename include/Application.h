@@ -31,7 +31,8 @@ class Application
     KeyboardInfo keyboardInfo;
     Tracker *tracker;
     TrackingPointStrategy *trackingPointStrategy;
-    std::string videoStreamFileName;
+    ProgramOptions pOptions;
+    bool cacheRun;
 };
 
 #endif

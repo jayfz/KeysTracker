@@ -28,6 +28,7 @@ FallingNotesTracker::generateMidiEvents(const std::vector<PixelLine> &collection
     }
 
     this->linesColored = collection;
+    this->linesTracked = collection;
 
     uint32_t absoluteTick = 0;
     uint32_t numLinesTotal = 0;

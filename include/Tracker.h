@@ -30,6 +30,7 @@ class Tracker
     uint32_t upperRangeOfNoteDetection = 5;
     std::array<double, 128> notesTrackingPoints;
     std::vector<PixelLine> linesColored;
+    std::vector<PixelLine> linesTracked;
 };
 
 #endif

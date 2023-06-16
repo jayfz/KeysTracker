@@ -9,7 +9,7 @@ PPMImageDecoder::PPMImageDecoder(FrameProcessor *processor, const std::string &f
 }
 PPMImageDecoder::~PPMImageDecoder() {}
 
-bool PPMImageDecoder::wasInitializedCorrectly() { return !inputFile.is_open(); }
+bool PPMImageDecoder::wasInitializedCorrectly() { return inputFile.is_open(); }
 void PPMImageDecoder::decode()
 {
 

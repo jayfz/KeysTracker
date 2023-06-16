@@ -4,8 +4,8 @@
 KeyboardTracker::KeyboardTracker(KeyboardInfo info, TrackingPointStrategy *strategy)
     : Tracker(info, strategy)
 {
-    this->bottomRangeOfNoteDetection = 0;
-    this->upperRangeOfNoteDetection = 10;
+    this->bottomRangeOfNoteDetection = 3;
+    this->upperRangeOfNoteDetection = 3;
 }
 std::vector<MidiKeysEvent>
 KeyboardTracker::generateMidiEvents(const std::vector<PixelLine> &collection)
@@ -18,6 +18,7 @@ KeyboardTracker::generateMidiEvents(const std::vector<PixelLine> &collection)
     };
 
     this->linesColored = collection;
+    this->linesTracked = collection;
 
     uint32_t absoluteTick = 0;
     uint32_t tickStep = 8;

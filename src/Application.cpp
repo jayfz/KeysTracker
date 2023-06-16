@@ -6,6 +6,7 @@
 #include "OverlappingNotesStrategy.h"
 #include "PPMImageDecoder.h"
 #include "RawPPMImageProcessor.h"
+#include "SimpleNotesStrategy.h"
 #include "SpacedNotesStrategy.h"
 
 #include <filesystem>
@@ -22,20 +23,25 @@ Application::Application(ProgramOptions options)
       keyboardInfo(options.octavesLength, options.numOfOctaves, options.firstOctaveAt,
                    noteColors),
       tracker(this->getTracker(options.trackMode)),
-      videoStreamFileName(options.videoStreamFileName)
+      pOptions(options)
 {
+    this->cacheRun = false;
+    namespace fs = std::filesystem;
+    auto cachePath = fs::path(
+        PixelLine::getPathForBigFormatFrame(getFileStem(options.videoStreamFileName)));
 
-    if (!doesCachedDecodedImageExist(options.videoStreamFileName)) {
+    if (fs::exists(cachePath)) {
+        this->frameProcessor = new RawPPMImageProcessor();
+        this->decoder = new PPMImageDecoder(this->frameProcessor, std::string(cachePath));
+        this->cacheRun = true;
+
+    } else {
 
         this->frameProcessor = new ColorFrameProcessor(options.rawFrameLinesToExtract,
                                                        options.rawFrameCopyFromLine);
 
         this->decoder = new H264Decoder(this->frameProcessor, options.videoStreamFileName,
                                         options.numberOfFramesToSkip);
-    } else {
-
-        this->frameProcessor = new RawPPMImageProcessor();
-        this->decoder = new PPMImageDecoder(this->frameProcessor, "");
     }
 }
 Application::~Application()
@@ -52,8 +58,10 @@ void Application::run()
     }
 
     decoder->decode();
-    PixelLine::saveBigFormatFrame(this->frameProcessor->getLines(),
-                                  getFileStem(this->videoStreamFileName));
+
+    if (!this->cacheRun)
+        PixelLine::saveBigFormatFrame(this->frameProcessor->getLines(),
+                                      getFileStem(this->pOptions.videoStreamFileName));
     std::vector<MidiKeysEvent> events =
         tracker->generateMidiEvents(this->frameProcessor->getLines());
 
@@ -76,7 +84,8 @@ Tracker *Application::getTracker(std::string trackerOption)
     }
 
     if (trackerOption == "keys") {
-        this->trackingPointStrategy = new SpacedNotesStrategy();
+        // new SpacedNotesStrategy(this->pOptions.firstOctavePositions);
+        this->trackingPointStrategy = new SimpleNotesStrategy();
         return new KeyboardTracker(this->keyboardInfo, this->trackingPointStrategy);
     }
 

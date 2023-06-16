@@ -25,6 +25,7 @@ target_sources(KeysTracker PUBLIC
     Tracker.cpp
     PPMImageDecoder.cpp
     RawPPMImageProcessor.cpp
+    SimpleNotesStrategy.cpp
 )
 
 ##main executable include directory  (headers)

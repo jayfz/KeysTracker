@@ -18,6 +18,7 @@ struct ProgramOptions {
     std::string rightHandWhiteKeyColor;
     std::string rightHandBlackKeyColor;
     std::string outFileName;
+    std::string firstOctavePositions;
     int firstOctaveAt;
     double octavesLength;
     int numOfOctaves;

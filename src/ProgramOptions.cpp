@@ -29,6 +29,9 @@ ProgramOptions::ProgramOptions(ArgumentParser parser)
     this->numberOfFramesToSkip =
         parser.getOptionOrDefault<int>("number-of-frames-to-skip", 0);
     this->outFileName = parser.getOptionOrDefault<std::string>("out-filename", "out.mid");
+
+    this->firstOctavePositions =
+        parser.getOptionOrDefault<std::string>("first-octave-positions", "");
 }
 bool ProgramOptions::areValid() const
 {
