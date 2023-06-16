@@ -79,15 +79,9 @@ bool H264Decoder::wasInitializedCorrectly()
 
 void H264Decoder::decode()
 {
-    // std::ifstream inputFile;
-    // inputFile.open(this->fileName, std::ios_base::binary);
     bool shouldStopDecoding = false;
 
-    // if (!inputFile.is_open()) {
-    //     return;
-    // }
-
-    while (this->inputFile.eof()) {
+    while (!this->inputFile.eof()) {
         inputFile.read(reinterpret_cast<char *>(this->inbuf), H264Decoder::INBUF_SIZE);
         size_t bytesRead = inputFile.gcount();
         uint8_t *inbufAddress = inbuf;
