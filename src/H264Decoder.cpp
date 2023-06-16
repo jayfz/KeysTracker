@@ -1,6 +1,5 @@
 #include "H264Decoder.h"
 #include "ColorFrameProcessor.h"
-#include "Keyboard.h"
 #include "ManagedMidiFile.h"
 #include <fstream>
 #include <iostream>
@@ -22,8 +21,7 @@ extern "C" {
 
 H264Decoder::H264Decoder(FrameProcessor *processor, const std::string &fileName,
                          uint32_t startingFrom, uint32_t numFramesToDecode)
-    : processor(processor),
-      fileName(fileName),
+    : Decoder(processor, fileName),
       startingFrom(startingFrom),
       numFramesToDecode(numFramesToDecode)
 {
@@ -72,7 +70,8 @@ bool H264Decoder::wasInitializedCorrectly()
 {
     bool initializedCorrectly = true;
 
-    if (!codec || !parser || !codecContext || !frame || !packet || openCodecresult < 0)
+    if (!codec || !parser || !codecContext || !frame || !packet || openCodecresult < 0 ||
+        !inputFile.is_open())
         initializedCorrectly = false;
 
     return initializedCorrectly;
@@ -80,15 +79,15 @@ bool H264Decoder::wasInitializedCorrectly()
 
 void H264Decoder::decode()
 {
-    std::ifstream inputFile;
-    inputFile.open(this->fileName, std::ios_base::binary);
+    // std::ifstream inputFile;
+    // inputFile.open(this->fileName, std::ios_base::binary);
     bool shouldStopDecoding = false;
 
-    if (!inputFile.is_open()) {
-        return;
-    }
+    // if (!inputFile.is_open()) {
+    //     return;
+    // }
 
-    while (!inputFile.eof()) {
+    while (this->inputFile.eof()) {
         inputFile.read(reinterpret_cast<char *>(this->inbuf), H264Decoder::INBUF_SIZE);
         size_t bytesRead = inputFile.gcount();
         uint8_t *inbufAddress = inbuf;
@@ -148,8 +147,8 @@ bool H264Decoder::processFrame()
              this->startingFrom) &&
             this->numFramesDecodedSofar < this->numFramesToDecode) {
 
-            this->processor->doProcessFrame(dst_data[0], this->frame->width,
-                                            this->frame->height);
+            this->frameProcessor->doProcessFrame(dst_data[0], this->frame->width,
+                                                 this->frame->height);
 
             this->numFramesDecodedSofar += 1;
             std::cout << "Proccessed frame: " << this->frame->coded_picture_number

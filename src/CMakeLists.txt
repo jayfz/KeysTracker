@@ -23,6 +23,8 @@ target_sources(KeysTracker PUBLIC
     RGBColor.cpp
     SpacedNotesStrategy.cpp
     Tracker.cpp
+    PPMImageDecoder.cpp
+    RawPPMImageProcessor.cpp
 )
 
 ##main executable include directory  (headers)

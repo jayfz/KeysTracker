@@ -1,9 +1,7 @@
 #ifndef H264_DECODER_H
 #define H264_DECODER_H
 
-// #include "PixelLine.h"
-// #include "RawFrame.h"
-#include "FrameProcessor.h"
+#include "Decoder.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -15,7 +13,7 @@ extern "C" {
 #include <libswscale/swscale.h> /* swsContext */
 }
 
-class H264Decoder
+class H264Decoder : public Decoder
 {
 
   public:
@@ -25,13 +23,13 @@ class H264Decoder
     ~H264Decoder();
     H264Decoder(const H264Decoder &other) = delete;
     H264Decoder &operator=(const H264Decoder &other) = delete;
-    bool wasInitializedCorrectly();
-    void decode();
+    bool wasInitializedCorrectly() override;
+    void decode() override;
 
   private:
     static const uint16_t INBUF_SIZE = 4096;
-    FrameProcessor *processor = nullptr;
-    std::string fileName;
+    // FrameProcessor *processor = nullptr;
+    // std::string fileName;
     uint32_t startingFrom;
     uint32_t numFramesToDecode;
     uint32_t numFramesDecodedSofar = 0;

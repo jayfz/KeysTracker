@@ -67,6 +67,7 @@
     "stop_token": "cpp",
     "regex": "cpp",
     "bitset": "cpp",
-    "pixelline": "c"
+    "pixelline": "c",
+    "codecvt": "cpp"
   }
 }

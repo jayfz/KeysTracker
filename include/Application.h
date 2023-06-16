@@ -1,16 +1,14 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "FallingNotesTracker.h"
+#include "Decoder.h"
 #include "FrameProcessor.h"
-#include "H264Decoder.h"
 #include "KeyboardInfo.h"
 #include "KeyboardNotesColors.h"
-#include "KeyboardTracker.h"
 #include "ManagedMidiFile.h"
-#include "OverlappingNotesStrategy.h"
 #include "ProgramOptions.h"
-#include "SpacedNotesStrategy.h"
+#include "Tracker.h"
+#include "TrackingPointStrategy.h"
 
 class Application
 {
@@ -27,12 +25,13 @@ class Application
     Tracker *getTracker(std::string trackerOption);
 
     FrameProcessor *frameProcessor;
-    H264Decoder decoder;
+    Decoder *decoder;
     ManagedMidiFile midiFile;
     KeyboardNotesColors noteColors;
     KeyboardInfo keyboardInfo;
     Tracker *tracker;
     TrackingPointStrategy *trackingPointStrategy;
+    std::string videoStreamFileName;
 };
 
 #endif

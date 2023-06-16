@@ -1,20 +1,42 @@
 #include "Application.h"
 #include "ColorFrameProcessor.h"
+#include "FallingNotesTracker.h"
+#include "H264Decoder.h"
+#include "KeyboardTracker.h"
+#include "OverlappingNotesStrategy.h"
+#include "PPMImageDecoder.h"
+#include "RawPPMImageProcessor.h"
+#include "SpacedNotesStrategy.h"
+
+#include <filesystem>
+
+bool doesCachedDecodedImageExist(const std::string &filename);
+std::string getFileStem(const std::string &filename);
 
 Application::Application(ProgramOptions options)
-    : frameProcessor(new ColorFrameProcessor(options.rawFrameLinesToExtract,
-                                             options.rawFrameCopyFromLine)),
-      decoder(frameProcessor, options.videoStreamFileName, options.numberOfFramesToSkip),
-
-      midiFile(options.outFileName),
+    : midiFile(options.outFileName),
 
       noteColors(options.leftHandWhiteKeyColor, options.leftHandBlackKeyColor,
                  options.rightHandWhiteKeyColor, options.rightHandBlackKeyColor),
 
       keyboardInfo(options.octavesLength, options.numOfOctaves, options.firstOctaveAt,
                    noteColors),
-      tracker(this->getTracker(options.trackMode))
+      tracker(this->getTracker(options.trackMode)),
+      videoStreamFileName(options.videoStreamFileName)
 {
+
+    if (!doesCachedDecodedImageExist(options.videoStreamFileName)) {
+
+        this->frameProcessor = new ColorFrameProcessor(options.rawFrameLinesToExtract,
+                                                       options.rawFrameCopyFromLine);
+
+        this->decoder = new H264Decoder(this->frameProcessor, options.videoStreamFileName,
+                                        options.numberOfFramesToSkip);
+    } else {
+
+        this->frameProcessor = new RawPPMImageProcessor();
+        this->decoder = new PPMImageDecoder(this->frameProcessor, "");
+    }
 }
 Application::~Application()
 {
@@ -25,12 +47,13 @@ Application::~Application()
 void Application::run()
 {
 
-    if (!decoder.wasInitializedCorrectly()) {
+    if (!decoder->wasInitializedCorrectly()) {
         return;
     }
 
-    decoder.decode();
-
+    decoder->decode();
+    PixelLine::saveBigFormatFrame(this->frameProcessor->getLines(),
+                                  getFileStem(this->videoStreamFileName));
     std::vector<MidiKeysEvent> events =
         tracker->generateMidiEvents(this->frameProcessor->getLines());
 
@@ -59,4 +82,17 @@ Tracker *Application::getTracker(std::string trackerOption)
 
     this->trackingPointStrategy = new OverlappingNotesStrategy();
     return new FallingNotesTracker(this->keyboardInfo, this->trackingPointStrategy);
+}
+
+bool doesCachedDecodedImageExist(const std::string &filename)
+{
+    std::string fileStem = getFileStem(filename);
+    std::filesystem::path path(PixelLine::getPathForBigFormatFrame(fileStem));
+    return std::filesystem::exists(path);
+}
+
+std::string getFileStem(const std::string &filename)
+{
+    std::filesystem::path path(filename);
+    return std::string(path.stem());
 }

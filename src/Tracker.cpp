@@ -6,7 +6,10 @@ Tracker::Tracker(KeyboardInfo info, TrackingPointStrategy *strategy) : keyboardI
     this->notesTrackingPoints = strategy->calculatePoints(this->keyboardInfo);
 };
 
-void Tracker::printColoredImage() { PixelLine::saveBigFormatFrame(this->linesColored); }
+void Tracker::printColoredImage()
+{
+    PixelLine::saveBigFormatFrame(this->linesColored, "debug");
+}
 
 std::vector<std::tuple<uint8_t, bool>>
 Tracker::getNoteOnEvents(const std::vector<uint8_t> &pixelLine)
