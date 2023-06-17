@@ -104,9 +104,9 @@
       "args": [
         "--input-video-filename=./toy.h264",
         "--left-hand-white-key-color=h97D3E9",
-        "--left-hand-black-key-color=h5C9ED8",
+        "--left-hand-black-key-color=h82C6EC",
         "--right-hand-white-key-color=hA5DCC1",
-        "--right-hand-black-key-color=h73CF93",
+        "--right-hand-black-key-color=h94E0AE",
         "--first-octave-at=0",
         "--octaves-length=1737",
         "--number-of-octaves=4",

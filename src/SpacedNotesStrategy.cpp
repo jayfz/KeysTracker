@@ -31,7 +31,6 @@ std::array<double, 128> SpacedNotesStrategy::calculatePoints(KeyboardInfo info)
 
         double startPixel = info.firstOctaveAt + (info.octaveWidth * octave);
         uint32_t baseNote = (octave * info.keysInAnOctave);
-        double currentPosition = 0;
 
         for (uint32_t key = 0; key < info.keysInAnOctave; key += 1) {
 

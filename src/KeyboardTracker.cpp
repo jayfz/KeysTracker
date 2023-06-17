@@ -93,12 +93,12 @@ KeyboardTracker::isThisANoteONEvent(const std::vector<uint8_t> &possibleNote,
         (expectBemol ? this->keyboardInfo.noteColors.getRightHandBlackKeyColor()
                      : this->keyboardInfo.noteColors.getRightHandWhiteKeyColor());
 
-    uint8_t tolerance = 36;
+    double tolerance = 0.2;
 
-    isLeftHandKeyPressed =
-        leftHandColor.isColorCloseEnoughToReference(averageRGBColor, tolerance);
-    isRightHandKeyPressed =
-        rightHandColor.isColorCloseEnoughToReference(averageRGBColor, tolerance);
+    isLeftHandKeyPressed = leftHandColor.isColorProportionsCloseEnoughToReference(
+        averageRGBColor, tolerance);
+    isRightHandKeyPressed = rightHandColor.isColorProportionsCloseEnoughToReference(
+        averageRGBColor, tolerance);
 
     return {isLeftHandKeyPressed, isRightHandKeyPressed};
 }

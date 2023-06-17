@@ -129,3 +129,44 @@ uint8_t RGBColor::stringHexToInt(const std::string &colorChannel)
 
     return static_cast<uint8_t>(result);
 }
+
+bool RGBColor::isColorProportionsCloseEnoughToReference(RGBColor other,
+                                                        double fudgeFactor) const
+{
+
+    if (!this->isColorCloseEnoughToReference(other, 75)) {
+        return false;
+    }
+
+    double redToGreenRatio = ((double)this->redChannel) / this->greenChannel;
+    double redToBlueRatio = ((double)this->redChannel) / this->blueChannel;
+
+    double otherRedToGreenRatio = ((double)other.redChannel) / other.greenChannel;
+    double otherRedToBlueRatio = ((double)other.redChannel) / other.blueChannel;
+
+    double redToGreenRatioComparasion = redToGreenRatio / otherRedToGreenRatio;
+    double redToBlueRatioComparasion = redToBlueRatio / otherRedToBlueRatio;
+
+    bool isRedToGreenRatioProportional = false;
+    bool isRedToBlueRatioProportional = false;
+
+    if (redToGreenRatioComparasion >= (1 - fudgeFactor) &&
+        redToGreenRatioComparasion <= (1 + fudgeFactor)) {
+        isRedToGreenRatioProportional = true;
+    }
+
+    if (redToBlueRatioComparasion >= (1 - fudgeFactor) &&
+        redToBlueRatioComparasion <= (1 + fudgeFactor)) {
+        isRedToBlueRatioProportional = true;
+    }
+
+    // if (std::abs(redToGreenRatio - otherRedToGreenRatio) < fudgeFactor) {
+    //     isRedToGreenRatioProportional = true;
+    // }
+
+    // if (std::abs(redToBlueRatio - otherRedToBlueRatio) < fudgeFactor) {
+    //     isRedToBlueRatioProportional = true;
+    // }
+
+    return isRedToGreenRatioProportional && isRedToBlueRatioProportional;
+}

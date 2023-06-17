@@ -16,6 +16,8 @@ class RGBColor
     static std::vector<RGBColor> fromBytes(std::vector<uint8_t> colorBytes);
 
     bool isColorCloseEnoughToReference(RGBColor other, uint8_t fudgeFactor) const;
+    bool isColorProportionsCloseEnoughToReference(RGBColor other,
+                                                  double fudgeFactor) const;
 
   private:
     uint8_t redChannel;
