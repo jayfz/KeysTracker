@@ -32,6 +32,9 @@ ProgramOptions::ProgramOptions(ArgumentParser parser)
 
     this->firstOctavePositions =
         parser.getOptionOrDefault<std::string>("first-octave-positions", "");
+
+    this->processFramesDivisiableBy =
+        parser.getOptionOrDefault<int>("process-frames-divisible-by", 1);
 }
 bool ProgramOptions::areValid() const
 {

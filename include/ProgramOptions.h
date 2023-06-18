@@ -25,6 +25,7 @@ struct ProgramOptions {
     int rawFrameLinesToExtract;
     int rawFrameCopyFromLine;
     int numberOfFramesToSkip;
+    int processFramesDivisiableBy;
 
   private:
     static std::string getErrorForMissedRequired(std::string required);

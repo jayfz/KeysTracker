@@ -9,7 +9,7 @@ class PixelLine
 {
 
   public:
-    PixelLine(uint8_t *line, uint32_t bytesToRead);
+    PixelLine(const uint8_t *line, uint32_t bytesToRead);
     const std::vector<uint8_t> &getLine() const;
     uint8_t &at(uint64_t index);
     static void saveBigFormatFrame(const std::vector<PixelLine> &lines,

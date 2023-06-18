@@ -11,8 +11,6 @@ class FallingNotesTracker : public Tracker
     virtual std::vector<MidiKeysEvent>
     generateMidiEvents(const std::vector<PixelLine> &collection) override;
 
-    static void markShortNotes(std::vector<MidiKeysEvent> &events);
-
   protected:
     std::pair<bool, bool> isThisANoteONEvent(const std::vector<uint8_t> &possibleNote,
                                              bool expectBemol) override;

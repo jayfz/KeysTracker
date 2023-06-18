@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-PixelLine::PixelLine(uint8_t *line, uint32_t bytesToRead)
+PixelLine::PixelLine(const uint8_t *line, uint32_t bytesToRead)
 {
     this->line.reserve(bytesToRead);
     std::copy(line, line + bytesToRead, std::back_inserter(this->line));

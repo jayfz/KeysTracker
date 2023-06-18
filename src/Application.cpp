@@ -22,8 +22,8 @@ Application::Application(ProgramOptions options)
 
       keyboardInfo(options.octavesLength, options.numOfOctaves, options.firstOctaveAt,
                    noteColors),
-      tracker(this->getTracker(options.trackMode)),
-      pOptions(options)
+      pOptions(options),
+      tracker(this->getTracker(options.trackMode))
 {
     this->cacheRun = false;
     namespace fs = std::filesystem;
@@ -86,7 +86,8 @@ Tracker *Application::getTracker(std::string trackerOption)
     if (trackerOption == "keys") {
         // new SpacedNotesStrategy(this->pOptions.firstOctavePositions);
         this->trackingPointStrategy = new SimpleNotesStrategy();
-        return new KeyboardTracker(this->keyboardInfo, this->trackingPointStrategy);
+        return new KeyboardTracker(this->keyboardInfo, this->trackingPointStrategy,
+                                   this->pOptions.processFramesDivisiableBy);
     }
 
     this->trackingPointStrategy = new OverlappingNotesStrategy();

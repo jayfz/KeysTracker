@@ -29,9 +29,9 @@ class Application
     ManagedMidiFile midiFile;
     KeyboardNotesColors noteColors;
     KeyboardInfo keyboardInfo;
+    ProgramOptions pOptions;
     Tracker *tracker;
     TrackingPointStrategy *trackingPointStrategy;
-    ProgramOptions pOptions;
     bool cacheRun;
 };
 

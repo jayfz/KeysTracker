@@ -27,13 +27,12 @@ FallingNotesTracker::generateMidiEvents(const std::vector<PixelLine> &collection
         return events;
     }
 
-    this->linesColored = collection;
-    this->linesTracked = collection;
-
     uint32_t absoluteTick = 0;
+    uint32_t tickStep = 1;
     uint32_t numLinesTotal = 0;
     std::vector<uint8_t> notesToRemoveFromMap;
-    std::unordered_map<uint8_t, NoteOnEvent> myMap;
+    std::unordered_map<uint8_t, NoteOnEvent>
+        myMap; // probably needs rework, from uint8_t to int
     std::vector<std::tuple<uint8_t, bool>> previousEvents;
 
     for (const auto &pixelLine : collection) {
@@ -87,13 +86,14 @@ FallingNotesTracker::generateMidiEvents(const std::vector<PixelLine> &collection
         }
 
         notesToRemoveFromMap.clear();
-        absoluteTick += 1;
+        absoluteTick += tickStep;
         previousEvents = onEvents;
 
         std::cout << "Processed line #" << numLinesTotal << std::endl;
     }
 
-    markShortNotes(events);
+    this->cleanUpShortNotes(events, tickStep * 2);
+    this->snapCloseNotesTogether(events, 20);
     this->printColoredImage();
     return events;
 }
@@ -134,25 +134,25 @@ FallingNotesTracker::isThisANoteONEvent(const std::vector<uint8_t> &possibleNote
     return {isLeftHandKeyPressed, isRightHandKeyPressed};
 }
 // snap notes close to each other
-void FallingNotesTracker::markShortNotes(std::vector<MidiKeysEvent> &events)
-{
-    uint32_t previousTick = 0;
+// void FallingNotesTracker::markShortNotes(std::vector<MidiKeysEvent> &events)
+// {
+//     uint32_t previousTick = 0;
 
-    for (auto &event : events) {
+//     for (auto &event : events) {
 
-        uint32_t fixedTick = event.tick;
+//         uint32_t fixedTick = event.tick;
 
-        // note has been marked as short already, so forget about it
-        if (event.note == 255)
-            continue;
+//         // note has been marked as short already, so forget about it
+//         if (event.note == 255)
+//             continue;
 
-        if (std::abs(static_cast<int32_t>(event.tick) -
-                     static_cast<int32_t>(previousTick)) <= 20) {
-            fixedTick = previousTick;
-        } else {
-            previousTick = event.tick;
-        }
+//         if (std::abs(static_cast<int32_t>(event.tick) -
+//                      static_cast<int32_t>(previousTick)) <= 20) {
+//             fixedTick = previousTick;
+//         } else {
+//             previousTick = event.tick;
+//         }
 
-        event.tick = fixedTick;
-    }
-}
+//         event.tick = fixedTick;
+//     }
+// }

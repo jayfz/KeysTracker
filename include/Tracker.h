@@ -24,6 +24,8 @@ class Tracker
 
     virtual std::pair<bool, bool>
     isThisANoteONEvent(const std::vector<uint8_t> &possibleNote, bool expectBemol) = 0;
+    void cleanUpShortNotes(std::vector<MidiKeysEvent> &events, uint32_t stepSpan);
+    void snapCloseNotesTogether(std::vector<MidiKeysEvent> &events, uint32_t tolerance);
 
     KeyboardInfo keyboardInfo;
     uint32_t bottomRangeOfNoteDetection = 5;
@@ -31,6 +33,9 @@ class Tracker
     std::array<double, 128> notesTrackingPoints;
     std::vector<PixelLine> linesColored;
     std::vector<PixelLine> linesTracked;
+
+  private:
+    void markShortNotes(std::vector<MidiKeysEvent> &events, uint32_t stepSpan);
 };
 
 #endif

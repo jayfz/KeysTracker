@@ -138,11 +138,20 @@ bool RGBColor::isColorProportionsCloseEnoughToReference(RGBColor other,
         return false;
     }
 
-    double redToGreenRatio = ((double)this->redChannel) / this->greenChannel;
-    double redToBlueRatio = ((double)this->redChannel) / this->blueChannel;
+    if (this->isColorCloseEnoughToReference(other, 24)) {
+        return true;
+    }
 
     double otherRedToGreenRatio = ((double)other.redChannel) / other.greenChannel;
     double otherRedToBlueRatio = ((double)other.redChannel) / other.blueChannel;
+
+    if ((otherRedToGreenRatio >= (1 - 0.08) && otherRedToGreenRatio <= (1 + 0.08)) &&
+        (otherRedToBlueRatio >= (1 - 0.08) && otherRedToBlueRatio <= (1 + 0.08))) {
+        return false; // probably checking against the white from a white key, dont care;
+    }
+
+    double redToGreenRatio = ((double)this->redChannel) / this->greenChannel;
+    double redToBlueRatio = ((double)this->redChannel) / this->blueChannel;
 
     double redToGreenRatioComparasion = redToGreenRatio / otherRedToGreenRatio;
     double redToBlueRatioComparasion = redToBlueRatio / otherRedToBlueRatio;
