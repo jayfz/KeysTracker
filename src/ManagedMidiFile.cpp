@@ -13,17 +13,11 @@ ManagedMidiFile::ManagedMidiFile(const std::string &outFileName)
 void ManagedMidiFile::addRightHandEvent(int atick, int key, int velocity)
 {
     this->midiFile.addNoteOn(0, atick, 0, key, velocity);
-    // std::cout << "addNoteOn(" << 0 << ", " << atick << ", " << 0 << ", " << key << ", " << velocity << ");" << std::endl;
 }
 
 void ManagedMidiFile::addLeftHandEvent(int atick, int key, int velocity)
 {
     this->midiFile.addNoteOn(1, atick, 1, key, velocity);
-    // std::cout << "addNoteOn(" << 1 << ", " << atick << ", " << 1 << ", " << key << ", " << velocity << ");" << std::endl;
 }
 
-void ManagedMidiFile::save()
-{
-    // this->midiFile.sortTracks();
-    this->midiFile.write(this->outFileName);
-}
+void ManagedMidiFile::save() { this->midiFile.write(this->outFileName); }

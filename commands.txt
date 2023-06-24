@@ -1,0 +1,3 @@
+download h264 video:
+python3 ./yt-dlp [vid] -S "codec:h264"
+

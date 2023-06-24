@@ -169,13 +169,5 @@ bool RGBColor::isColorProportionsCloseEnoughToReference(RGBColor other,
         isRedToBlueRatioProportional = true;
     }
 
-    // if (std::abs(redToGreenRatio - otherRedToGreenRatio) < fudgeFactor) {
-    //     isRedToGreenRatioProportional = true;
-    // }
-
-    // if (std::abs(redToBlueRatio - otherRedToBlueRatio) < fudgeFactor) {
-    //     isRedToBlueRatioProportional = true;
-    // }
-
     return isRedToGreenRatioProportional && isRedToBlueRatioProportional;
 }

@@ -71,7 +71,7 @@
         "--raw-frame-copy-from-line=540",
         "--track-mode=falling-notes",
         "--number-of-frames-to-skip=5",
-        "--out-filename=firestorm.mid"
+        "--out-filename=firestone.mid"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -161,6 +161,49 @@
         "--track-mode=falling-notes",
         "--number-of-frames-to-skip=5",
         "--out-filename=sorry.mid"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      // "preLaunchTask": "cppbuild",
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        },
+        {
+          "description": "Set Disassembly Flavor to Intel",
+          "text": "-gdb-set disassembly-flavor intel",
+          "ignoreFailures": true
+        }
+      ],
+      // "preLaunchTask": "make",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "miDebuggerArgs": "-q -ex quit; wait() { fg >/dev/null; }; /bin/gdb -q --interpreter=mi"
+    },
+    {
+      "name": "Test run: The only exception - Paramore",
+      "type": "cppdbg",
+      "request": "launch",
+      // "program": "${fileDirname}/${fileBasenameNoExtension}",
+      "program": "${workspaceFolder}/build/src/KeysTracker",
+      "args": [
+        "--input-video-filename=./the-only-exception.h264",
+        "--left-hand-white-key-color=h758CB1",
+        "--left-hand-black-key-color=h386AAF",
+        "--right-hand-white-key-color=h88BE50",
+        "--right-hand-black-key-color=h5D9E18",
+        "--first-octave-at=50",
+        "--octaves-length=1205",
+        "--number-of-octaves=7",
+        "--raw-frame-lines-to-extract=1",
+        "--raw-frame-copy-from-line=610",
+        "--track-mode=keys",
+        "--number-of-frames-to-skip=5",
+        "--out-filename=the-only-exception.mid"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
